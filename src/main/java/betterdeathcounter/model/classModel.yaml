@@ -1,0 +1,238 @@
+- c: 	org.fulib.classmodel.ClassModel
+  classes: 	death 	boss 	game 	player
+  defaultCollectionType: 	c1
+  defaultPropertyStyle: 	Bean
+  defaultRoleType: 	"java.util.ArrayList<%s>"
+  mainJavaDir: 	"src/main/java"
+  packageName: 	betterdeathcounter.model
+  packageSrcFolder: 	"src/main/java/betterdeathcounter/model"
+
+- death: 	org.fulib.classmodel.Clazz
+  attributes: 	death_percentage 	death_time
+  model: 	c
+  modified: 	false
+  name: 	Death
+  propertyStyle: 	Bean
+  roles: 	death_Boss_deaths
+
+- boss: 	org.fulib.classmodel.Clazz
+  attributes: 	boss_name 	boss_secondPhase
+  model: 	c
+  modified: 	false
+  name: 	Boss
+  propertyStyle: 	Bean
+  roles: 	boss_game 	boss_deaths 	boss_Player_currentBoss
+
+- game: 	org.fulib.classmodel.Clazz
+  attributes: 	game_name 	game_spreadsheetId
+  model: 	c
+  modified: 	false
+  name: 	Game
+  propertyStyle: 	Bean
+  roles: 	game_bosses 	game_Player_currentGame 	game_player
+
+- player: 	org.fulib.classmodel.Clazz
+  attributes: 	player_name 	player_APIUsername 	player_garbageFactor
+  model: 	c
+  modified: 	false
+  name: 	Player
+  propertyStyle: 	Bean
+  roles: 	player_currentGame 	player_currentBoss 	player_games
+
+- c1: 	org.fulib.classmodel.CollectionType
+  implClass: 	class java.util.ArrayList
+  implTemplate: 	"java.util.ArrayList<%s>"
+  itf: 	org.fulib.classmodel.CollectionInterface.List
+  qualifiedImplName: 	java.util.ArrayList
+  simpleImplName: 	ArrayList
+
+- death_percentage: 	org.fulib.classmodel.Attribute
+  clazz: 	death
+  id: 	Death_percentage
+  modified: 	false
+  name: 	percentage
+  propertyStyle: 	Bean
+  type: 	int
+  typeSignature: 	int
+
+- death_time: 	org.fulib.classmodel.Attribute
+  clazz: 	death
+  id: 	Death_time
+  modified: 	false
+  name: 	time
+  propertyStyle: 	Bean
+  type: 	int
+  typeSignature: 	int
+
+- death_Boss_deaths: 	org.fulib.classmodel.AssocRole
+  aggregation: 	false
+  cardinality: 	0
+  clazz: 	death
+  collectionType: 	c1
+  id: 	Death_Boss_deaths
+  modified: 	false
+  other: 	boss_deaths
+  propertyStyle: 	Bean
+  roleType: 	"java.util.ArrayList<%s>"
+
+- boss_name: 	org.fulib.classmodel.Attribute
+  clazz: 	boss
+  id: 	Boss_name
+  modified: 	false
+  name: 	name
+  propertyStyle: 	Bean
+  type: 	String
+  typeSignature: 	String
+
+- boss_secondPhase: 	org.fulib.classmodel.Attribute
+  clazz: 	boss
+  id: 	Boss_secondPhase
+  modified: 	false
+  name: 	secondPhase
+  propertyStyle: 	Bean
+  type: 	Boolean
+  typeSignature: 	Boolean
+
+- boss_game: 	org.fulib.classmodel.AssocRole
+  aggregation: 	false
+  cardinality: 	1
+  clazz: 	boss
+  id: 	Boss_game
+  modified: 	false
+  name: 	game
+  other: 	game_bosses
+  propertyStyle: 	Bean
+
+- boss_deaths: 	org.fulib.classmodel.AssocRole
+  aggregation: 	false
+  cardinality: 	42
+  clazz: 	boss
+  collectionType: 	c1
+  id: 	Boss_deaths
+  modified: 	false
+  name: 	deaths
+  other: 	death_Boss_deaths
+  propertyStyle: 	Bean
+  roleType: 	"java.util.ArrayList<%s>"
+
+- boss_Player_currentBoss: 	org.fulib.classmodel.AssocRole
+  aggregation: 	false
+  cardinality: 	0
+  clazz: 	boss
+  collectionType: 	c1
+  id: 	Boss_Player_currentBoss
+  modified: 	false
+  other: 	player_currentBoss
+  propertyStyle: 	Bean
+  roleType: 	"java.util.ArrayList<%s>"
+
+- game_name: 	org.fulib.classmodel.Attribute
+  clazz: 	game
+  id: 	Game_name
+  modified: 	false
+  name: 	name
+  propertyStyle: 	Bean
+  type: 	String
+  typeSignature: 	String
+
+- game_spreadsheetId: 	org.fulib.classmodel.Attribute
+  clazz: 	game
+  id: 	Game_spreadsheetId
+  modified: 	false
+  name: 	spreadsheetId
+  propertyStyle: 	Bean
+  type: 	String
+  typeSignature: 	String
+
+- game_bosses: 	org.fulib.classmodel.AssocRole
+  aggregation: 	false
+  cardinality: 	42
+  clazz: 	game
+  collectionType: 	c1
+  id: 	Game_bosses
+  modified: 	false
+  name: 	bosses
+  other: 	boss_game
+  propertyStyle: 	Bean
+  roleType: 	"java.util.ArrayList<%s>"
+
+- game_Player_currentGame: 	org.fulib.classmodel.AssocRole
+  aggregation: 	false
+  cardinality: 	0
+  clazz: 	game
+  collectionType: 	c1
+  id: 	Game_Player_currentGame
+  modified: 	false
+  other: 	player_currentGame
+  propertyStyle: 	Bean
+  roleType: 	"java.util.ArrayList<%s>"
+
+- game_player: 	org.fulib.classmodel.AssocRole
+  aggregation: 	false
+  cardinality: 	1
+  clazz: 	game
+  id: 	Game_player
+  modified: 	false
+  name: 	player
+  other: 	player_games
+  propertyStyle: 	Bean
+
+- player_name: 	org.fulib.classmodel.Attribute
+  clazz: 	player
+  id: 	Player_name
+  modified: 	false
+  name: 	name
+  propertyStyle: 	Bean
+  type: 	String
+  typeSignature: 	String
+
+- player_APIUsername: 	org.fulib.classmodel.Attribute
+  clazz: 	player
+  id: 	Player_APIUsername
+  modified: 	false
+  name: 	APIUsername
+  propertyStyle: 	Bean
+  type: 	String
+  typeSignature: 	String
+
+- player_garbageFactor: 	org.fulib.classmodel.Attribute
+  clazz: 	player
+  id: 	Player_garbageFactor
+  modified: 	false
+  name: 	garbageFactor
+  propertyStyle: 	Bean
+  type: 	double
+  typeSignature: 	double
+
+- player_currentGame: 	org.fulib.classmodel.AssocRole
+  aggregation: 	false
+  cardinality: 	1
+  clazz: 	player
+  id: 	Player_currentGame
+  modified: 	false
+  name: 	currentGame
+  other: 	game_Player_currentGame
+  propertyStyle: 	Bean
+
+- player_currentBoss: 	org.fulib.classmodel.AssocRole
+  aggregation: 	false
+  cardinality: 	1
+  clazz: 	player
+  id: 	Player_currentBoss
+  modified: 	false
+  name: 	currentBoss
+  other: 	boss_Player_currentBoss
+  propertyStyle: 	Bean
+
+- player_games: 	org.fulib.classmodel.AssocRole
+  aggregation: 	false
+  cardinality: 	42
+  clazz: 	player
+  collectionType: 	c1
+  id: 	Player_games
+  modified: 	false
+  name: 	games
+  other: 	game_player
+  propertyStyle: 	Bean
+  roleType: 	"java.util.ArrayList<%s>"
+

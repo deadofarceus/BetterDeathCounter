@@ -1,0 +1,73 @@
+.chart-vertical-grid-lines {
+    -fx-stroke: #000000;
+}
+
+.chart-horizontal-grid-lines {
+    -fx-stroke: #000000;
+}
+
+.chart-plot-background {
+    -fx-background-color: transparent;
+}
+
+.chart-alternative-row-fill {
+    -fx-fill: transparent;
+}
+
+.axis {
+    -fx-tick-label-font-size: 1.2em;   
+    -fx-tick-label-fill: #000000;
+    -fx-tick-label-font-weight: bold;
+}
+ 
+.axis-label {
+   -fx-text-fill: #000000;
+   -fx-font-size: 1.6em;
+   -fx-font-weight: bold;
+   -fx-pref-height: 42;
+}
+
+.chart-series-line {    
+    -fx-stroke-width: 2px;
+    -fx-effect: null;
+}
+ 
+.default-color0.chart-series-line { 
+    -fx-stroke: #155608;
+    -fx-stroke-width: 3px;
+}
+
+.default-color1.chart-series-line { 
+    -fx-stroke: #ff0000;
+    -fx-stroke-width: 4px;
+}
+
+.default-color2.chart-series-line { 
+    -fx-stroke: #00b7ff75;
+    -fx-stroke-width: 3px;
+
+}
+
+.default.chart-line-symbol {
+    -fx-pref-width: 2;
+    -fx-pref-height: 2;
+}
+
+.series1.default-color1.chart-line-symbol { 
+    -fx-background-color: transparent, transparent;
+}
+
+.default-color0.chart-line-symbol { 
+    -fx-background-color: #155608, #2dc70f;
+}
+
+.default-color1.chart-line-symbol { 
+    /* -fx-background-color: #ff0000, white;  */
+    -fx-background-color: rgba(255, 0, 0, 0), rgba(255, 0, 0, 0);
+}
+
+.default-color2.chart-line-symbol { 
+    -fx-background-color: #17617d, #00b7ff;
+    
+}
+

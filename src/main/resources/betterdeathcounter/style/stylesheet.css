@@ -1,0 +1,42 @@
+/* Styling the slider track */
+.jfx-slider > .track {
+    -fx-background-color: rgb(74, 29, 29);
+    -fx-pref-height: 10;
+}
+
+/* Styling the slider thumb */
+.jfx-slider > .thumb {
+    -fx-background-color: green;
+    -fx-pref-height: 15;
+    -fx-pref-width: 15;
+}
+
+/* Styling the filled track */
+.jfx-slider > .colored-track {
+    -fx-background-color: red;
+}
+
+/* Styling the animated thumb */
+.jfx-slider > .animated-thumb {
+    /* -fx-background-color: green; */
+    visibility: hidden;
+}
+
+/* Styling the slider value text inside animated thumb */
+.jfx-slider .slider-value {
+    -fx-fill: white;
+    -fx-stroke: white;
+}
+
+/* Styling the axis */
+.slider .axis {
+    -fx-tick-label-fill: rgb(255, 185, 44);
+    -fx-font-style: italic;
+    -fx-font-weight: 900;
+}
+
+/* Styling the tick marks */
+.slider {
+    -fx-font-size: 20;
+    -fx-font-family: sans-serif;
+}

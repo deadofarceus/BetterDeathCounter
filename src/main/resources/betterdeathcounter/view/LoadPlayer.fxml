@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<HBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="100.0" prefWidth="325.0" spacing="5.0" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml">
+   <children>
+      <VBox alignment="CENTER_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="100.0" prefWidth="287.0">
+         <children>
+            <Text id="name" strokeType="OUTSIDE" strokeWidth="0.0" text="WWWWWWWWWW" wrappingWidth="260.4609375">
+               <font>
+                  <Font size="26.0" />
+               </font>
+            </Text>
+            <Text id="games" strokeType="OUTSIDE" strokeWidth="0.0" text="Games played: ">
+               <font>
+                  <Font size="16.0" />
+               </font>
+            </Text>
+            <Text id="deaths" strokeType="OUTSIDE" strokeWidth="0.0" text="Deaths:">
+               <font>
+                  <Font size="16.0" />
+               </font>
+            </Text>
+         </children>
+      </VBox>
+      <VBox alignment="CENTER" prefHeight="100.0" prefWidth="86.0">
+         <children>
+            <Button id="loadButton" mnemonicParsing="false" prefHeight="49.0" prefWidth="49.0" text="Load">
+               <font>
+                  <Font size="13.0" />
+               </font>
+            </Button>
+         </children>
+      </VBox>
+   </children>
+</HBox>
