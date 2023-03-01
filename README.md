@@ -22,6 +22,8 @@ You can also connect a game to a Google Spreadsheet, but thats complicated to se
 https://developers.google.com/sheets/api/quickstart/java
 
 ## Code details
+You need a JDK to launch the .bat file 
+
 MVC Pattern JavaFx
 
 My first Project, i think this is fine.
