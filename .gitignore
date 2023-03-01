@@ -12,7 +12,8 @@
 
 /tokens/
 /src/main/resources/betterdeathcounter/credentials.json
-/data/
+/data/*
+/graphs/*
 
 hs_err_pid*
 
