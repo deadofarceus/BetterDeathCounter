@@ -25,6 +25,8 @@ public class GenModel implements ClassModelDecorator {
         String name;
         String APIUsername;
         double garbageFactor;
+        Boolean showLinear;
+        Boolean showExp;
 
         @Link
         Game currentGame;

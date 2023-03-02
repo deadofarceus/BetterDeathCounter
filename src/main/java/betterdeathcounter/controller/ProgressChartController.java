@@ -37,9 +37,6 @@ public class ProgressChartController implements Controller {
         if(regressionInfos.length == 0) return;
         double linearY = regressionInfos[1];
         double linearZero = regressionInfos[2];
-        // double secLinearSlope = regressionInfos[3];
-        // double secLinearY = regressionInfos[4];
-        // double secLinearZero = regressionInfos[5];
         double expSlope = regressionInfos[3];
         double expY = regressionInfos[4];
         int size = player.getCurrentBoss().getDeaths().size();
@@ -60,13 +57,10 @@ public class ProgressChartController implements Controller {
 
         exponential = new XYChart.Series<>();
         exponential.setName("Exponential Regression");
-        // exponential.setName("Second Linear Regression");
         
         for (int i = 0; i < player.getCurrentBoss().getDeaths().size()+1; i++) {
             exponential.getData().add(new XYChart.Data<>(i, expY - Math.exp(expSlope*i)));
         }
-        // exponential.getData().add(new XYChart.Data<>(0, secLinearY));
-        // exponential.getData().add(new XYChart.Data<>(secLinearZero, 0));
     }
 
     @Override
@@ -94,15 +88,27 @@ public class ProgressChartController implements Controller {
         lineChart.setMinWidth(1265);
         lineChart.getData().add(series);
 
-        
-        lineChart.getData().add(exponential);
-        lineChart.getData().add(linear);
-        
-        for (Node n : lineChart.getChildrenUnmodifiable()) {
-            if (n instanceof Legend) {
-                final Legend legend = (Legend) n;
-                legend.getItems().get(1).getSymbol()
-                    .setStyle("-fx-background-color: rgba(255, 0, 0), rgba(130, 0, 0);");
+
+        /*
+         * show regression
+         */
+        if (player.getShowExp()) {
+            lineChart.getData().add(exponential);
+        } else {
+            lineChart.getData().add(new XYChart.Series<Number, Number>());
+        }
+        if (player.getShowLinear()) {
+            lineChart.getData().add(linear);
+        } else {
+            lineChart.getData().add(new XYChart.Series<Number, Number>());
+        }
+        if (player.getShowExp()) {
+            for (Node n : lineChart.getChildrenUnmodifiable()) {
+                if (n instanceof Legend) {
+                    final Legend legend = (Legend) n;
+                    legend.getItems().get(1).getSymbol()
+                        .setStyle("-fx-background-color: rgba(255, 0, 0), rgba(130, 0, 0);");
+                }
             }
         }
 

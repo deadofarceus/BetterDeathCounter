@@ -32,7 +32,7 @@
   roles: 	game_bosses 	game_Player_currentGame 	game_player
 
 - player: 	org.fulib.classmodel.Clazz
-  attributes: 	player_name 	player_APIUsername 	player_garbageFactor
+  attributes: 	player_name 	player_APIUsername 	player_garbageFactor 	player_showLinear 	player_showExp
   model: 	c
   modified: 	false
   name: 	Player
@@ -203,6 +203,24 @@
   propertyStyle: 	Bean
   type: 	double
   typeSignature: 	double
+
+- player_showLinear: 	org.fulib.classmodel.Attribute
+  clazz: 	player
+  id: 	Player_showLinear
+  modified: 	false
+  name: 	showLinear
+  propertyStyle: 	Bean
+  type: 	Boolean
+  typeSignature: 	Boolean
+
+- player_showExp: 	org.fulib.classmodel.Attribute
+  clazz: 	player
+  id: 	Player_showExp
+  modified: 	false
+  name: 	showExp
+  propertyStyle: 	Bean
+  type: 	Boolean
+  typeSignature: 	Boolean
 
 - player_currentGame: 	org.fulib.classmodel.AssocRole
   aggregation: 	false

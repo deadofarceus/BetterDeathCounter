@@ -269,14 +269,27 @@ public class IandOService {
         
         
         lineChart.getData().add(series);
-        lineChart.getData().add(exponential);
-        lineChart.getData().add(linear);
-        
-        for (Node n : lineChart.getChildrenUnmodifiable()) {
-            if (n instanceof Legend) {
-                final Legend legend = (Legend) n;
-                // legend.setStyle("-fx-background-color: lightgray;");
-                legend.getItems().get(1).getSymbol().setStyle("-fx-background-color: rgba(255, 0, 0), rgba(130, 0, 0);");
+
+        /*
+         * show regression
+         */
+        if (player.getShowExp()) {
+            lineChart.getData().add(exponential);
+        } else {
+            lineChart.getData().add(new XYChart.Series<Number, Number>());
+        }
+        if (player.getShowLinear()) {
+            lineChart.getData().add(linear);
+        } else {
+            lineChart.getData().add(new XYChart.Series<Number, Number>());
+        }
+        if (player.getShowExp()) {
+            for (Node n : lineChart.getChildrenUnmodifiable()) {
+                if (n instanceof Legend) {
+                    final Legend legend = (Legend) n;
+                    legend.getItems().get(1).getSymbol()
+                        .setStyle("-fx-background-color: rgba(255, 0, 0), rgba(130, 0, 0);");
+                }
             }
         }
 

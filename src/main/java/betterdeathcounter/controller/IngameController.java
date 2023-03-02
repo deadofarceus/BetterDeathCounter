@@ -19,6 +19,7 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.RadioMenuItem;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.FileChooser;
@@ -71,7 +72,7 @@ public class IngameController implements Controller {
                 }
                 System.out.println("Saved all Players");
             }
-        }, 0, 60000);
+        }, 30000, 60000);
     }
 
     @Override
@@ -85,7 +86,8 @@ public class IngameController implements Controller {
 
         final Menu file = optionBar.getMenus().get(0);
         final Menu edit = optionBar.getMenus().get(1);
-        final Menu connect = optionBar.getMenus().get(2);
+        final Menu graph = optionBar.getMenus().get(2);
+        final Menu connect = optionBar.getMenus().get(3);
 
         /*
          * FILE MENU
@@ -131,7 +133,6 @@ public class IngameController implements Controller {
                 Game g = iandOService.getGameFrom(savedGame);
                 player.withGames(g);
                 player.setCurrentGame(g);
-                System.out.println("Saved Game as Excel under: " + savedGame.getPath());
             }
 
             System.out.println("Opened Game from Excel: ");
@@ -314,6 +315,23 @@ public class IngameController implements Controller {
 
             //     exitDialog.showAndWait();
             // }
+        });
+
+        /*
+         * Graph Menu
+         */
+        final RadioMenuItem linear = (RadioMenuItem) graph.getItems().get(0);
+        final RadioMenuItem exp = (RadioMenuItem) graph.getItems().get(1);
+        
+        linear.selectedProperty().set(player.getShowLinear());
+        exp.selectedProperty().set(player.getShowExp());
+
+        linear.setOnAction(e -> {
+            player.setShowLinear(!player.getShowLinear());
+        });
+
+        exp.setOnAction(e -> {
+            player.setShowExp(!player.getShowExp());
         });
 
         /*

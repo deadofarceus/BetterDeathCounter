@@ -106,6 +106,8 @@ public class IngameScreenController implements Controller {
 
         player.listeners().addPropertyChangeListener(Player.PROPERTY_CURRENT_BOSS, bossListener);
         player.listeners().addPropertyChangeListener(Player.PROPERTY_GARBAGE_FACTOR, garbageListener);
+        player.listeners().addPropertyChangeListener(Player.PROPERTY_SHOW_EXP, garbageListener);
+        player.listeners().addPropertyChangeListener(Player.PROPERTY_SHOW_LINEAR, garbageListener);
         player.getCurrentBoss().listeners().addPropertyChangeListener(Boss.PROPERTY_DEATHS, deathListener);
 
         return parent;
@@ -118,7 +120,10 @@ public class IngameScreenController implements Controller {
         deathController.destroy();
         progressChartController.destroy();
 
-        player.listeners().removePropertyChangeListener(garbageListener);
+        player.listeners().removePropertyChangeListener(Player.PROPERTY_GARBAGE_FACTOR, garbageListener);
+        player.listeners().removePropertyChangeListener(Player.PROPERTY_SHOW_EXP, garbageListener);
+        player.listeners().removePropertyChangeListener(Player.PROPERTY_SHOW_LINEAR, garbageListener);
+
         player.listeners().removePropertyChangeListener(bossListener);
         player.getCurrentBoss().listeners().removePropertyChangeListener(Boss.PROPERTY_DEATHS, deathListener);
     }

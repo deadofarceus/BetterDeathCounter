@@ -52,7 +52,10 @@ public class SetupController implements Controller {
                 if (!playerDir.exists()){
                     playerDir.mkdirs();
 
-                    Player player = new Player().setName(nameInput.getText());
+                    Player player = new Player()
+                        .setName(nameInput.getText())
+                        .setShowLinear(true)
+                        .setShowExp(true);
                     oldPlayers.add(player);
                     IngameController ic = new IngameController(app, oldPlayers, player);
                     ic.init();

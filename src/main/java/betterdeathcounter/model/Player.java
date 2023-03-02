@@ -12,6 +12,8 @@ public class Player
    public static final String PROPERTY_GAMES = "games";
    public static final String PROPERTY_GARBAGE_FACTOR = "garbageFactor";
    public static final String PROPERTY_APIUSERNAME = "APIUsername";
+   public static final String PROPERTY_SHOW_LINEAR = "showLinear";
+   public static final String PROPERTY_SHOW_EXP = "showExp";
    public static final String PROPERTY_CURRENT_GAME = "currentGame";
    public static final String PROPERTY_CURRENT_BOSS = "currentBoss";
    private String name;
@@ -19,6 +21,8 @@ public class Player
    protected PropertyChangeSupport listeners;
    private double garbageFactor;
    private String APIUsername;
+   private Boolean showLinear;
+   private Boolean showExp;
    private Game currentGame;
    private Boss currentBoss;
 
@@ -139,6 +143,42 @@ public class Player
       final String oldValue = this.APIUsername;
       this.APIUsername = value;
       this.firePropertyChange(PROPERTY_APIUSERNAME, oldValue, value);
+      return this;
+   }
+
+   public Boolean getShowLinear()
+   {
+      return this.showLinear;
+   }
+
+   public Player setShowLinear(Boolean value)
+   {
+      if (Objects.equals(value, this.showLinear))
+      {
+         return this;
+      }
+
+      final Boolean oldValue = this.showLinear;
+      this.showLinear = value;
+      this.firePropertyChange(PROPERTY_SHOW_LINEAR, oldValue, value);
+      return this;
+   }
+
+   public Boolean getShowExp()
+   {
+      return this.showExp;
+   }
+
+   public Player setShowExp(Boolean value)
+   {
+      if (Objects.equals(value, this.showExp))
+      {
+         return this;
+      }
+
+      final Boolean oldValue = this.showExp;
+      this.showExp = value;
+      this.firePropertyChange(PROPERTY_SHOW_EXP, oldValue, value);
       return this;
    }
 
