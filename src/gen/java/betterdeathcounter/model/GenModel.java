@@ -27,6 +27,7 @@ public class GenModel implements ClassModelDecorator {
         double garbageFactor;
         Boolean showLinear;
         Boolean showExp;
+        Boolean showTimer;
 
         @Link
         Game currentGame;

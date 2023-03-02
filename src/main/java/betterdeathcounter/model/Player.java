@@ -14,6 +14,7 @@ public class Player
    public static final String PROPERTY_APIUSERNAME = "APIUsername";
    public static final String PROPERTY_SHOW_LINEAR = "showLinear";
    public static final String PROPERTY_SHOW_EXP = "showExp";
+   public static final String PROPERTY_SHOW_TIMER = "showTimer";
    public static final String PROPERTY_CURRENT_GAME = "currentGame";
    public static final String PROPERTY_CURRENT_BOSS = "currentBoss";
    private String name;
@@ -23,6 +24,7 @@ public class Player
    private String APIUsername;
    private Boolean showLinear;
    private Boolean showExp;
+   private Boolean showTimer;
    private Game currentGame;
    private Boss currentBoss;
 
@@ -179,6 +181,24 @@ public class Player
       final Boolean oldValue = this.showExp;
       this.showExp = value;
       this.firePropertyChange(PROPERTY_SHOW_EXP, oldValue, value);
+      return this;
+   }
+
+   public Boolean getShowTimer()
+   {
+      return this.showTimer;
+   }
+
+   public Player setShowTimer(Boolean value)
+   {
+      if (Objects.equals(value, this.showTimer))
+      {
+         return this;
+      }
+
+      final Boolean oldValue = this.showTimer;
+      this.showTimer = value;
+      this.firePropertyChange(PROPERTY_SHOW_TIMER, oldValue, value);
       return this;
    }
 

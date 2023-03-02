@@ -32,7 +32,7 @@
   roles: 	game_bosses 	game_Player_currentGame 	game_player
 
 - player: 	org.fulib.classmodel.Clazz
-  attributes: 	player_name 	player_APIUsername 	player_garbageFactor 	player_showLinear 	player_showExp
+  attributes: 	player_name 	player_APIUsername 	player_garbageFactor 	player_showLinear 	player_showExp 	player_showTimer
   model: 	c
   modified: 	false
   name: 	Player
@@ -218,6 +218,15 @@
   id: 	Player_showExp
   modified: 	false
   name: 	showExp
+  propertyStyle: 	Bean
+  type: 	Boolean
+  typeSignature: 	Boolean
+
+- player_showTimer: 	org.fulib.classmodel.Attribute
+  clazz: 	player
+  id: 	Player_showTimer
+  modified: 	false
+  name: 	showTimer
   propertyStyle: 	Bean
   type: 	Boolean
   typeSignature: 	Boolean

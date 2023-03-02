@@ -56,6 +56,7 @@
                      <items>
                         <RadioMenuItem id="linear" mnemonicParsing="false" text="Toggle linear regression" />
                         <RadioMenuItem id="exp" mnemonicParsing="false" text="Toggle exponential regression" />
+                        <RadioMenuItem id="timer" mnemonicParsing="false" text="Toggle timer" />
                      </items>
                   </Menu>
                   <Menu id="schusch" mnemonicParsing="false" text="Connect">

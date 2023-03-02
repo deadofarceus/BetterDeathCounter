@@ -55,7 +55,8 @@ public class SetupController implements Controller {
                     Player player = new Player()
                         .setName(nameInput.getText())
                         .setShowLinear(true)
-                        .setShowExp(true);
+                        .setShowExp(true)
+                        .setShowTimer(true);
                     oldPlayers.add(player);
                     IngameController ic = new IngameController(app, oldPlayers, player);
                     ic.init();

@@ -322,9 +322,11 @@ public class IngameController implements Controller {
          */
         final RadioMenuItem linear = (RadioMenuItem) graph.getItems().get(0);
         final RadioMenuItem exp = (RadioMenuItem) graph.getItems().get(1);
+        final RadioMenuItem timer = (RadioMenuItem) graph.getItems().get(2);
         
         linear.selectedProperty().set(player.getShowLinear());
         exp.selectedProperty().set(player.getShowExp());
+        timer.selectedProperty().set(player.getShowTimer());
 
         linear.setOnAction(e -> {
             player.setShowLinear(!player.getShowLinear());
@@ -332,6 +334,10 @@ public class IngameController implements Controller {
 
         exp.setOnAction(e -> {
             player.setShowExp(!player.getShowExp());
+        });
+
+        timer.setOnAction(e -> {
+            player.setShowTimer(!player.getShowTimer());
         });
 
         /*

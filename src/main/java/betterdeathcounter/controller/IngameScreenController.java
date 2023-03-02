@@ -15,7 +15,7 @@ import javafx.scene.layout.HBox;
 public class IngameScreenController implements Controller {
 
     private final Player player;
-    private PropertyChangeListener bossListener, garbageListener, deathListener;
+    private PropertyChangeListener bossListener, garbageListener, deathListener, timerListener;
     private Controller gameController, bossController, deathController, progressChartController;
 
     public IngameScreenController(Player player) {
@@ -104,7 +104,17 @@ public class IngameScreenController implements Controller {
             } catch (IOException e1) {}
         };
 
+        timerListener = e -> {
+            deathController.destroy();
+            deathController = new DeathController(player.getCurrentBoss(), player);
+            actionBox.getChildren().remove(2);
+            try {
+                actionBox.getChildren().add(deathController.render());
+            } catch (IOException e1) {}
+        };
+
         player.listeners().addPropertyChangeListener(Player.PROPERTY_CURRENT_BOSS, bossListener);
+        player.listeners().addPropertyChangeListener(Player.PROPERTY_SHOW_TIMER, timerListener);
         player.listeners().addPropertyChangeListener(Player.PROPERTY_GARBAGE_FACTOR, garbageListener);
         player.listeners().addPropertyChangeListener(Player.PROPERTY_SHOW_EXP, garbageListener);
         player.listeners().addPropertyChangeListener(Player.PROPERTY_SHOW_LINEAR, garbageListener);
@@ -124,7 +134,9 @@ public class IngameScreenController implements Controller {
         player.listeners().removePropertyChangeListener(Player.PROPERTY_SHOW_EXP, garbageListener);
         player.listeners().removePropertyChangeListener(Player.PROPERTY_SHOW_LINEAR, garbageListener);
 
-        player.listeners().removePropertyChangeListener(bossListener);
+        player.listeners().removePropertyChangeListener(Player.PROPERTY_CURRENT_BOSS, bossListener);
+        player.listeners().removePropertyChangeListener(Player.PROPERTY_SHOW_TIMER, timerListener);
+
         player.getCurrentBoss().listeners().removePropertyChangeListener(Boss.PROPERTY_DEATHS, deathListener);
     }
     

@@ -14,6 +14,7 @@ import betterdeathcounter.service.CalculateService;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
+import javafx.scene.text.Text;
 
 public class DeathController implements Controller {
 
@@ -21,6 +22,13 @@ public class DeathController implements Controller {
     private final CalculateService calculateService = new CalculateService();
     private final APIService apiService = new APIService();
     private final Player player;
+    private long startTime = System.currentTimeMillis();
+    private long elapsedTime = System.currentTimeMillis() - startTime;
+    private long elapsedSeconds = elapsedTime / 1000;
+    private long secondsDisplay = elapsedSeconds % 60;
+    private long elapsedMinutes = elapsedSeconds / 60;
+    private Runnable timerThread;
+    private boolean shutdown = false;
 
     public DeathController(Boss boss, Player player) {
         this.boss = boss;
@@ -41,6 +49,32 @@ public class DeathController implements Controller {
         final Parent parent = FXMLLoader.load(Main.class.getResource("view/Death.fxml"));
         
         /*
+         * Timer display
+         */
+        final Text timerText = (Text) parent.lookup("#timerText");
+
+        if(player.getShowTimer()) {
+            timerText.setText(elapsedMinutes + ":" + secondsDisplay);
+            timerThread = new Runnable() {
+                public void run() {
+                    while (!shutdown) {
+                        elapsedTime = System.currentTimeMillis() - startTime;
+                        elapsedSeconds = elapsedTime / 1000;
+                        secondsDisplay = elapsedSeconds % 60;
+                        elapsedMinutes = elapsedSeconds / 60;
+                        timerText.setText(elapsedMinutes + ":" + secondsDisplay);
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException e) {}
+                    }
+                }
+            };
+            new Thread(timerThread).start();
+        }
+
+
+
+        /*
          * Button actions
          */
         final Button newDeath = (Button) parent.lookup("#newDeath");
@@ -51,6 +85,11 @@ public class DeathController implements Controller {
 
         newDeath.setOnAction(e -> {
             Death d = new Death().setPercentage(percentageSlider.valueProperty().intValue());
+
+            if(player.getShowTimer()) {
+                timerText.setText("0:0");
+                startTime = System.currentTimeMillis();
+            }
 
             if(boss.getName().equals("Other Monsters or Heights")) {
                 boss.withDeaths(new Death());
@@ -107,6 +146,7 @@ public class DeathController implements Controller {
 
     @Override
     public void destroy() {
+        shutdown = true;
     }
     
 }
