@@ -236,7 +236,6 @@ public class IandOService {
 
         exponential = new XYChart.Series<>();
         exponential.setName("Exponential Regression");
-        // exponential.setName("Second Linear Regression");
         
         for (int i = 0; i < player.getCurrentBoss().getDeaths().size()+1; i++) {
             exponential.getData().add(new XYChart.Data<>(i, expY - Math.exp(expSlope*i)));
@@ -246,11 +245,19 @@ public class IandOService {
         try {
             parent = FXMLLoader.load(Main.class.getResource("view/ProgressChart.fxml"));
         } catch (IOException e) { e.printStackTrace(); }
+
         if(regressionInfos.length == 0) return;
-        parent.getStylesheets().add(Main.class.getResource("style/LinechartOutputStyle.css").toString());
+
+        if (!player.getShowExp() && player.getShowLinear()) {
+            parent.getStylesheets().add(Main.class.getResource("style/LinechartOutputStyleAltered.css").toString());
+        } else {
+            parent.getStylesheets().add(Main.class.getResource("style/LinechartOutputStyle.css").toString());
+        }
+
+        int deaths = player.getCurrentBoss().getDeaths().size();
 
         final VBox graphBox = (VBox) parent.lookup("#graphBox");
-        final NumberAxis xaxis = new NumberAxis(0, player.getCurrentBoss().getDeaths().size(), 25);  
+        final NumberAxis xaxis = new NumberAxis(0, deaths + deaths*0.05, 25);  
         final NumberAxis yaxis = new NumberAxis(0,105,10);  
         xaxis.setLabel("Trys");
         yaxis.setLabel("Boss HP left in %");
@@ -275,20 +282,20 @@ public class IandOService {
          */
         if (player.getShowExp()) {
             lineChart.getData().add(exponential);
-        } else {
-            lineChart.getData().add(new XYChart.Series<Number, Number>());
         }
         if (player.getShowLinear()) {
             lineChart.getData().add(linear);
-        } else {
-            lineChart.getData().add(new XYChart.Series<Number, Number>());
         }
-        if (player.getShowExp()) {
-            for (Node n : lineChart.getChildrenUnmodifiable()) {
-                if (n instanceof Legend) {
-                    final Legend legend = (Legend) n;
+        for (Node n : lineChart.getChildrenUnmodifiable()) {
+             if (n instanceof Legend) {
+                final Legend legend = (Legend) n;
+                if(player.getShowLinear()) {
                     legend.getItems().get(1).getSymbol()
-                        .setStyle("-fx-background-color: rgba(255, 0, 0), rgba(130, 0, 0);");
+                    .setStyle("-fx-background-color: #17617d, #00b7ff;");
+                }
+                if(player.getShowExp()) {
+                    legend.getItems().get(1).getSymbol()
+                    .setStyle("-fx-background-color: rgba(255, 0, 0), rgba(130, 0, 0);");
                 }
             }
         }

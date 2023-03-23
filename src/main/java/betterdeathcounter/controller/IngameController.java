@@ -51,8 +51,7 @@ public class IngameController implements Controller {
             player.setCurrentGame(new Game().setName("Please create a new game"));
             player.setCurrentBoss(new Boss().setName("Please create a new game").setSecondPhase(false));
         } else {
-            Game g = player.getGames().get(player.getGames().size()-1);
-            player.setCurrentGame(g);
+            Game g = player.getCurrentGame();
             if(g.getBosses().isEmpty()) {
                 player.setCurrentBoss(new Boss().setName("Other Monsters or Heights").setGame(g).setSecondPhase(false));
             }
@@ -72,7 +71,7 @@ public class IngameController implements Controller {
                 }
                 System.out.println("Saved all Players");
             }
-        }, 30000, 60000);
+        }, 60000, 120000);
     }
 
     @Override
@@ -414,6 +413,7 @@ public class IngameController implements Controller {
 
             if(exitDialog.getResult() == ButtonType.OK) {
                 player.setCurrentGame(g);
+                player.setCurrentBoss(g.getBosses().get(g.getBosses().size()-1));
 
                 changeBoss.getItems().clear();
                 for (Boss otherBoss : player.getCurrentGame().getBosses()) {

@@ -23,6 +23,11 @@
             <Font size="50.0" />
          </font>
       </Text>
+      <Text id="totalTime" strokeType="OUTSIDE" strokeWidth="0.0" text="Total Time:" textAlignment="CENTER">
+         <font>
+            <Font size="20.0" />
+         </font>
+      </Text>
       <Button id="secondPhase" mnemonicParsing="false" prefHeight="29.0" prefWidth="243.0" text="Enable second Phase" textAlignment="CENTER">
          <font>
             <Font size="23.0" />

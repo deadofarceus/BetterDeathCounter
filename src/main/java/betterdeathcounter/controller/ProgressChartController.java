@@ -66,12 +66,19 @@ public class ProgressChartController implements Controller {
     @Override
     public Parent render() throws IOException {
         final Parent parent = FXMLLoader.load(Main.class.getResource("view/ProgressChart.fxml"));
+
         if(regressionInfos.length == 0) return parent;
-        parent.getStylesheets().add(Main.class.getResource("style/LinechartStyle.css").toString());
+
+        if (!player.getShowExp() && player.getShowLinear()) {
+            parent.getStylesheets().add(Main.class.getResource("style/LinechartStyleAltered.css").toString());
+        } else {
+            parent.getStylesheets().add(Main.class.getResource("style/LinechartStyle.css").toString());
+        }
 
         final VBox graphBox = (VBox) parent.lookup("#graphBox");
         
-        final NumberAxis xaxis = new NumberAxis(0, player.getCurrentBoss().getDeaths().size(), 25);  
+        int deaths = player.getCurrentBoss().getDeaths().size();
+        final NumberAxis xaxis = new NumberAxis(0, deaths + deaths*0.05, 25);  
         final NumberAxis yaxis = new NumberAxis(0,105,10);  
         xaxis.setLabel("Trys");
         yaxis.setLabel("Boss HP left in %");
@@ -88,26 +95,27 @@ public class ProgressChartController implements Controller {
         lineChart.setMinWidth(1265);
         lineChart.getData().add(series);
 
+        
 
         /*
          * show regression
          */
         if (player.getShowExp()) {
             lineChart.getData().add(exponential);
-        } else {
-            lineChart.getData().add(new XYChart.Series<Number, Number>());
         }
         if (player.getShowLinear()) {
             lineChart.getData().add(linear);
-        } else {
-            lineChart.getData().add(new XYChart.Series<Number, Number>());
         }
-        if (player.getShowExp()) {
-            for (Node n : lineChart.getChildrenUnmodifiable()) {
-                if (n instanceof Legend) {
-                    final Legend legend = (Legend) n;
+        for (Node n : lineChart.getChildrenUnmodifiable()) {
+             if (n instanceof Legend) {
+                final Legend legend = (Legend) n;
+                if(player.getShowLinear()) {
                     legend.getItems().get(1).getSymbol()
-                        .setStyle("-fx-background-color: rgba(255, 0, 0), rgba(130, 0, 0);");
+                    .setStyle("-fx-background-color: #17617d, #00b7ff;");
+                }
+                if(player.getShowExp()) {
+                    legend.getItems().get(1).getSymbol()
+                    .setStyle("-fx-background-color: rgba(255, 0, 0), rgba(130, 0, 0);");
                 }
             }
         }

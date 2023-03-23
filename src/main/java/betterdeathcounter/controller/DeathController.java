@@ -2,6 +2,7 @@ package betterdeathcounter.controller;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+import java.util.List;
 
 import com.jfoenix.controls.JFXSlider;
 
@@ -52,6 +53,7 @@ public class DeathController implements Controller {
          * Timer display
          */
         final Text timerText = (Text) parent.lookup("#timerText");
+        final Text totalTime = (Text) parent.lookup("#totalTime");
 
         if(player.getShowTimer()) {
             timerText.setText(elapsedMinutes + ":" + secondsDisplay);
@@ -62,16 +64,23 @@ public class DeathController implements Controller {
                         elapsedSeconds = elapsedTime / 1000;
                         secondsDisplay = elapsedSeconds % 60;
                         elapsedMinutes = elapsedSeconds / 60;
-                        timerText.setText(elapsedMinutes + ":" + secondsDisplay);
+
+                        String displaySeconds = secondsDisplay+"";
+                        String displayMinutes = elapsedMinutes+"";
+                        if(secondsDisplay<10) displaySeconds = "0" + displaySeconds;
+                        if(elapsedMinutes<10) displayMinutes = "0" + displayMinutes;
+
+                        timerText.setText(displayMinutes + ":" + displaySeconds);
                         try {
-                            Thread.sleep(1000);
+                            Thread.sleep(200);
                         } catch (InterruptedException e) {}
                     }
                 }
             };
             new Thread(timerThread).start();
-        }
 
+            totalTime.setText(totalTime(player.getCurrentBoss().getDeaths()));
+        }
 
 
         /*
@@ -84,10 +93,26 @@ public class DeathController implements Controller {
         secondPhase.setVisible(boss.getSecondPhase());
 
         newDeath.setOnAction(e -> {
-            Death d = new Death().setPercentage(percentageSlider.valueProperty().intValue());
+            int percentage = percentageSlider.valueProperty().intValue();
+            Death d = new Death().setPercentage(percentage);
+
+            if(elapsedSeconds > 30) d.setTime((int)elapsedSeconds);
+            else {
+                Death nearest = null;
+                for (Death death : player.getCurrentBoss().getDeaths()) {
+                    if(death.getPercentage() - 5 < percentage && percentage < death.getPercentage() +5) {
+                        if(nearest == null || nearest.getPercentage()-percentage > death.getPercentage()-percentage) {
+                            nearest = death;
+                        }
+                    }
+                }
+
+                if (nearest != null) {
+                    d.setTime(nearest.getTime());
+                }
+            }
 
             if(player.getShowTimer()) {
-                timerText.setText("0:0");
                 startTime = System.currentTimeMillis();
             }
 
@@ -117,6 +142,7 @@ public class DeathController implements Controller {
                 }
             }
 
+            totalTime.setText(totalTime(player.getCurrentBoss().getDeaths()));
         });
     
         secondPhase.setOnAction(e -> {
@@ -142,6 +168,27 @@ public class DeathController implements Controller {
         });
 
         return parent;
+    }
+
+    private String totalTime(List<Death> deaths) {
+        int totalSeconds = 0;
+
+        for (Death death : deaths) {
+            totalSeconds += death.getTime();
+        }
+
+        int totalSecondsDisplay = totalSeconds % 60;
+        int totalElapsedMinutes = totalSeconds / 60;
+        int totalElapsedHours = totalElapsedMinutes / 60;
+
+        String displaySeconds = totalSecondsDisplay+"";
+        String displayMinutes = totalElapsedMinutes % 60 +"";
+        String displayHours = totalElapsedMinutes+"";
+        if(totalSecondsDisplay<10) displaySeconds = "0" + displaySeconds;
+        if(totalElapsedMinutes<10) displayMinutes = "0" + displayMinutes;
+        if(totalElapsedHours<10) displayHours = "0" + displayHours;
+
+        return "Total Time:" + "\n" + displayHours + ":" + displayMinutes + ":" + displaySeconds;
     }
 
     @Override
