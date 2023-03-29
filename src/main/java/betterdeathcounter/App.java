@@ -19,6 +19,7 @@ public class App extends Application {
         this.stage = primaryStage;
         primaryStage.setScene(new Scene(new Label("Loading...")));
         primaryStage.setTitle("Better Deathcounter");
+        primaryStage.setResizable(false);
 
         show(new SetupController(this));
         primaryStage.show();

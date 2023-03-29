@@ -1,8 +1,10 @@
 package betterdeathcounter.controller;
 
 import java.io.IOException;
+import java.util.List;
 
 import betterdeathcounter.Main;
+import betterdeathcounter.model.Death;
 import betterdeathcounter.model.Player;
 import betterdeathcounter.service.CalculateService;
 import javafx.fxml.FXMLLoader;
@@ -35,12 +37,9 @@ public class ProgressChartController implements Controller {
     public void init() {
         regressionInfos = calculateService.getRegressionInfos(player);
         if(regressionInfos.length == 0) return;
-        double linearY = regressionInfos[1];
-        double linearZero = regressionInfos[2];
-        double expSlope = regressionInfos[3];
-        double expY = regressionInfos[4];
-        int size = player.getCurrentBoss().getDeaths().size();
-
+        
+        final List<Death> deaths = player.getCurrentBoss().getDeaths();
+        final int size = deaths.size();
 
         series = new XYChart.Series<>();
         series.setName("Deaths");
@@ -49,12 +48,15 @@ public class ProgressChartController implements Controller {
                 player.getCurrentBoss().getDeaths().get(i).getPercentage()));
         }
 
-
+        final double linearY = regressionInfos[1];
+        final double linearZero = regressionInfos[2];
         linear = new XYChart.Series<>();
         linear.setName("Linear Regression");
         linear.getData().add(new XYChart.Data<>(0, linearY));
         linear.getData().add(new XYChart.Data<>(linearZero, 0));
 
+        final double expSlope = regressionInfos[3];
+        final double expY = regressionInfos[4];
         exponential = new XYChart.Series<>();
         exponential.setName("Exponential Regression");
         
@@ -67,35 +69,31 @@ public class ProgressChartController implements Controller {
     public Parent render() throws IOException {
         final Parent parent = FXMLLoader.load(Main.class.getResource("view/ProgressChart.fxml"));
 
-        if(regressionInfos.length == 0) return parent;
-
-        if (!player.getShowExp() && player.getShowLinear()) {
-            parent.getStylesheets().add(Main.class.getResource("style/LinechartStyleAltered.css").toString());
-        } else {
-            parent.getStylesheets().add(Main.class.getResource("style/LinechartStyle.css").toString());
+        if (regressionInfos.length == 0) {
+            return parent;
         }
+    
+        String lineChartStyle = !player.getShowExp() && player.getShowLinear()
+                ? "style/LinechartStyleAltered.css"
+                : "style/LinechartStyle.css";
+        parent.getStylesheets().add(Main.class.getResource(lineChartStyle).toString());
 
         final VBox graphBox = (VBox) parent.lookup("#graphBox");
         
         int deaths = player.getCurrentBoss().getDeaths().size();
-        final NumberAxis xaxis = new NumberAxis(0, deaths + deaths*0.05, 25);  
+        final NumberAxis xaxis = new NumberAxis(0, (int)deaths + deaths*0.05, 25);  
         final NumberAxis yaxis = new NumberAxis(0,105,10);  
         xaxis.setLabel("Trys");
         yaxis.setLabel("Boss HP left in %");
+        if (player.getCurrentBoss().getSecondPhase()) {
+            yaxis.setUpperBound(205);
+        }
 
         LineChart<Number, Number> lineChart = new LineChart<>(xaxis, yaxis);
         lineChart.setAnimated(false);
-
-        if (player.getCurrentBoss().getSecondPhase()) {
-            yaxis.setUpperBound(205);
-            lineChart.setMinHeight(672);
-        } else {
-            lineChart.setMaxHeight(335);
-        }
+        lineChart.setMaxHeight(player.getCurrentBoss().getSecondPhase() ? 672 : 335);
         lineChart.setMinWidth(1265);
         lineChart.getData().add(series);
-
-        
 
         /*
          * show regression
@@ -106,9 +104,10 @@ public class ProgressChartController implements Controller {
         if (player.getShowLinear()) {
             lineChart.getData().add(linear);
         }
+
         for (Node n : lineChart.getChildrenUnmodifiable()) {
              if (n instanceof Legend) {
-                final Legend legend = (Legend) n;
+                Legend legend = (Legend) n;
                 if(player.getShowLinear()) {
                     legend.getItems().get(1).getSymbol()
                     .setStyle("-fx-background-color: #17617d, #00b7ff;");
@@ -119,9 +118,6 @@ public class ProgressChartController implements Controller {
                 }
             }
         }
-
-        lineChart.applyCss();
-        lineChart.layout(); 
 
         graphBox.getChildren().add(lineChart);
 

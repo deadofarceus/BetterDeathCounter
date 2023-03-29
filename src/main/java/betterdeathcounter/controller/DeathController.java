@@ -12,6 +12,7 @@ import betterdeathcounter.model.Death;
 import betterdeathcounter.model.Player;
 import betterdeathcounter.service.APIService;
 import betterdeathcounter.service.CalculateService;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
@@ -28,7 +29,7 @@ public class DeathController implements Controller {
     private long elapsedSeconds = elapsedTime / 1000;
     private long secondsDisplay = elapsedSeconds % 60;
     private long elapsedMinutes = elapsedSeconds / 60;
-    private Runnable timerThread;
+    private Thread timerThread;
     private boolean shutdown = false;
 
     public DeathController(Boss boss, Player player) {
@@ -56,24 +57,22 @@ public class DeathController implements Controller {
         final Text totalTime = (Text) parent.lookup("#totalTime");
 
         if(player.getShowTimer()) {
-            timerText.setText(elapsedMinutes + ":" + secondsDisplay);
-            timerThread = new Runnable() {
-                public void run() {
-                    while (!shutdown) {
-                        elapsedTime = (System.currentTimeMillis() - startTime)/1000;
-
-                        long minutes = (elapsedTime % 3600) / 60;
-                        long seconds = elapsedTime % 60;
-                
-                        String time = String.format("%02d:%02d", minutes, seconds);
-                        timerText.setText(time);
-                        try {
-                            Thread.sleep(200);
-                        } catch (InterruptedException e) {}
+            timerText.setText(String.format("%02d:%02d", elapsedMinutes, secondsDisplay));
+            timerThread = new Thread(() -> {
+                while (!shutdown) {
+                    elapsedTime = (System.currentTimeMillis() - startTime) / 1000;
+                    long minutes = (elapsedTime % 3600) / 60;
+                    long seconds = elapsedTime % 60;
+                    Platform.runLater(() -> timerText.setText(String.format("%02d:%02d", minutes, seconds)));
+                    try {
+                        Thread.sleep(200);
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
                     }
                 }
-            };
-            new Thread(timerThread).start();
+            });
+            timerThread.start();
+        
 
             totalTime.setText(totalTime(player.getCurrentBoss().getDeaths()));
         }
@@ -116,21 +115,20 @@ public class DeathController implements Controller {
                 if(!calculateService.bossDead(boss)) {
                     boss.withDeaths(d);
 
-                    new Thread() {
-                        public void run() {
-                            try {
-                                if (player.getCurrentGame().getSpreadsheetId() != null
-                                    && player.getAPIUsername() != null) {
-                                    apiService.sendData(player.getCurrentGame(), boss);
-                                } else {
-                                    System.out.println("No connection to google service!");
-                                    System.out.println("Please enter API Username for the player and ");
-                                    System.out.println("the spreadsheetId for the game under the Connect menu!");
-                                    System.out.println();
-                                }
-                            } catch (GeneralSecurityException | IOException e1) { e1.printStackTrace(); }
+                    new Thread(() -> {
+                        try {
+                            if (player.getCurrentGame().getSpreadsheetId() != null && player.getAPIUsername() != null) {
+                                apiService.sendData(player.getCurrentGame(), boss);
+                            } else {
+                                System.out.println("No connection to google service!");
+                                System.out.println("Please enter API Username for the player and ");
+                                System.out.println("the spreadsheetId for the game under the Connect menu!");
+                                System.out.println();
+                            }
+                        } catch (GeneralSecurityException | IOException e1) {
+                            e1.printStackTrace();
                         }
-                    }.start();
+                    }).start();
                     
                     System.out.println("New Death: " + d.getPercentage());
                 }
@@ -146,19 +144,13 @@ public class DeathController implements Controller {
             for (Death death : boss.getDeaths()) {
                 death.setPercentage(death.getPercentage()+100);
             }
-            secondPhase.setVisible(false);
-                
+
+            secondPhase.setVisible(false);  
         });
 
         percentageSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
             newDeath.setText("NEW DEATH: " + newValue.intValue() + "%");
-            if(newValue.intValue() == 0) {
-                if (!boss.getSecondPhase()) {
-                    secondPhase.setVisible(true);
-                }
-            } else {
-                secondPhase.setVisible(false);
-            }
+            secondPhase.setVisible(newValue.intValue() == 0 && !boss.getSecondPhase());
         });
 
         return parent;
