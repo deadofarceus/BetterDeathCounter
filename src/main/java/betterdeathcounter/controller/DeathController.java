@@ -60,17 +60,13 @@ public class DeathController implements Controller {
             timerThread = new Runnable() {
                 public void run() {
                     while (!shutdown) {
-                        elapsedTime = System.currentTimeMillis() - startTime;
-                        elapsedSeconds = elapsedTime / 1000;
-                        secondsDisplay = elapsedSeconds % 60;
-                        elapsedMinutes = elapsedSeconds / 60;
+                        elapsedTime = (System.currentTimeMillis() - startTime)/1000;
 
-                        String displaySeconds = secondsDisplay+"";
-                        String displayMinutes = elapsedMinutes+"";
-                        if(secondsDisplay<10) displaySeconds = "0" + displaySeconds;
-                        if(elapsedMinutes<10) displayMinutes = "0" + displayMinutes;
-
-                        timerText.setText(displayMinutes + ":" + displaySeconds);
+                        long minutes = (elapsedTime % 3600) / 60;
+                        long seconds = elapsedTime % 60;
+                
+                        String time = String.format("%02d:%02d", minutes, seconds);
+                        timerText.setText(time);
                         try {
                             Thread.sleep(200);
                         } catch (InterruptedException e) {}
@@ -89,8 +85,6 @@ public class DeathController implements Controller {
         final Button newDeath = (Button) parent.lookup("#newDeath");
         final Button secondPhase = (Button) parent.lookup("#secondPhase");
         final JFXSlider percentageSlider = (JFXSlider) parent.lookup("#percentageSlider");
-        
-        secondPhase.setVisible(boss.getSecondPhase());
 
         newDeath.setOnAction(e -> {
             int percentage = percentageSlider.valueProperty().intValue();
@@ -177,18 +171,12 @@ public class DeathController implements Controller {
             totalSeconds += death.getTime();
         }
 
-        int totalSecondsDisplay = totalSeconds % 60;
-        int totalElapsedMinutes = totalSeconds / 60;
-        int totalElapsedHours = totalElapsedMinutes / 60;
+        int hours = totalSeconds / 3600;
+        int minutes = (totalSeconds % 3600) / 60;
+        int seconds = totalSeconds % 60;
 
-        String displaySeconds = totalSecondsDisplay+"";
-        String displayMinutes = totalElapsedMinutes % 60 +"";
-        String displayHours = totalElapsedMinutes+"";
-        if(totalSecondsDisplay<10) displaySeconds = "0" + displaySeconds;
-        if(totalElapsedMinutes<10) displayMinutes = "0" + displayMinutes;
-        if(totalElapsedHours<10) displayHours = "0" + displayHours;
-
-        return "Total Time:" + "\n" + displayHours + ":" + displayMinutes + ":" + displaySeconds;
+        String time = String.format("%03d:%02d:%02d", hours, minutes, seconds);
+        return "Total Time:" + "\n" + time;
     }
 
     @Override

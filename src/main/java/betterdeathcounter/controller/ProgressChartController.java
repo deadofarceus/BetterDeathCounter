@@ -90,7 +90,7 @@ public class ProgressChartController implements Controller {
             yaxis.setUpperBound(205);
             lineChart.setMinHeight(672);
         } else {
-            lineChart.setMaxHeight(348);
+            lineChart.setMaxHeight(335);
         }
         lineChart.setMinWidth(1265);
         lineChart.getData().add(series);
