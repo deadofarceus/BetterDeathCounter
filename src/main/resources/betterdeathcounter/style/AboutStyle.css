@@ -21,8 +21,7 @@
     -fx-effect: dropshadow(gaussian, #7F8C8D, 5, 0, 0, 2);
     -fx-text-fill: white;
     -fx-text-alignment: center;
-    -fx-font-size: 14px;
-    -fx-width: 200px;
+    -fx-font-size: 18px;
 }
 
 .thanks-label {

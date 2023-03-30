@@ -35,6 +35,14 @@ public class BossStatsScene {
 
         Boss boss = player.getCurrentBoss();
         double[] regressionInfos = calculateService.getRegressionInfos(player);
+        List<String> infoLabels = List.of(
+            "Number of deaths: \n" + boss.getDeaths().size(),
+            "Expected last try: \n" + regressionInfos[5],
+            "Total spend time: \n" + totalTime(boss.getDeaths()),
+            "Time per percentage: \n" + timePerPercentage(boss.getDeaths()),
+            "Time from 100 to 0: \n" + timefrom100to0(boss.getDeaths()),
+            "Time till defeated: \n" + timeTillDefeated(boss.getDeaths(), regressionInfos)
+            );
     
         Stage stage = new Stage();
         stage.setTitle("Stats for " + boss.getName());
@@ -54,30 +62,12 @@ public class BossStatsScene {
         grid.setHgap(20);
         grid.setVgap(20);
         grid.setAlignment(Pos.CENTER);
-    
-        Label deathLabel = new Label("Number of deaths: \n" + boss.getDeaths().size());
-        grid.add(deathLabel, 0, 1);
-        deathLabel.getStyleClass().add("info-label");
-    
-        Label lastTryLabel = new Label("Expected last try: \n" + regressionInfos[5]);
-        grid.add(lastTryLabel, 1, 1);
-        lastTryLabel.getStyleClass().add("info-label");
-    
-        Label totalTimeLabel = new Label("Total spend time: \n" + totalTime(boss.getDeaths()));
-        grid.add(totalTimeLabel, 0, 2);
-        totalTimeLabel.getStyleClass().add("info-label");
-    
-        Label timePerPercLabel = new Label("Time per percentage: \n" + timePerPercentage(boss.getDeaths()));
-        grid.add(timePerPercLabel, 1, 2);
-        timePerPercLabel.getStyleClass().add("info-label");
-    
-        Label time100to0Label = new Label("Time from 100 to 0: \n" + timefrom100to0(boss.getDeaths()));
-        grid.add(time100to0Label, 0, 3);
-        time100to0Label.getStyleClass().add("info-label");
-    
-        Label timeTillDefeatLabel = new Label("Time till defeated: \n" + timeTillDefeated(boss.getDeaths(), regressionInfos));
-        grid.add(timeTillDefeatLabel, 1, 3);
-        timeTillDefeatLabel.getStyleClass().add("info-label");
+
+        for (int i = 0; i < infoLabels.size(); i++) {
+            int row = i / 2;
+            int col = i % 2;
+            grid.add(getInfoLabel(infoLabels.get(i)), col, row+1);
+        }
     
         Button closeButton = new Button("Close");
         closeButton.setOnAction(event -> stage.close());
@@ -97,71 +87,75 @@ public class BossStatsScene {
         app.getStage().getScene().setOnMouseClicked(event ->{});
     }
 
-    private String timeTillDefeated(List<Death> deaths, double[] regressionInfos) {
+    private Label getInfoLabel(String info) {
+        Label label = new Label(info);
+        label.getStyleClass().add("info-label");
+        label.setMinWidth(200);
+        label.setAlignment(Pos.CENTER);
+        return label;
+    }
+
+    private double getTimePerPercentage(List<Death> deaths) {
         double timePerPercentage = 0.0;
-
+    
         for (Death death : deaths) {
-            timePerPercentage += death.getTime()/death.getPercentage();
+            if (death.getTime() != 0) {
+                timePerPercentage += death.getTime() / death.getPercentage();
+            }
         }
-
-        timePerPercentage /= deaths.size();
-
+    
+        return timePerPercentage / deaths.size();
+    }
+    
+    private String timeTillDefeated(List<Death> deaths, double[] regressionInfos) {
+        double timePerPercentage = getTimePerPercentage(deaths);
+    
         int totalSeconds = 0;
         final double expSlope = regressionInfos[3];
         final double expY = regressionInfos[4];
-
+    
         for (int i = deaths.size(); i < regressionInfos[5]; i++) {
-            totalSeconds += (int)((expY - Math.exp(expSlope*i)) * timePerPercentage);
+            totalSeconds += (int) ((expY - Math.exp(expSlope * i)) * timePerPercentage);
         }
-
+    
         for (Death death : deaths) {
             totalSeconds += death.getTime();
         }
-
+    
         return formatSeconds(totalSeconds, true);
     }
-
+    
     private String timefrom100to0(List<Death> deaths) {
-        double timePerPercentage = 0.0;
-
-        for (Death death : deaths) {
-            timePerPercentage += death.getTime()/death.getPercentage();
-        }
-
-        timePerPercentage /= deaths.size();
-
-        return formatSeconds((int)timePerPercentage*100, true);
+        double timePerPercentage = getTimePerPercentage(deaths);
+    
+        return formatSeconds((int) (timePerPercentage * 100), true);
     }
-
+    
     private String timePerPercentage(List<Death> deaths) {
-
-        double timePerPercentage = 0.0;
-
-        for (Death death : deaths) {
-            timePerPercentage += death.getTime()/death.getPercentage();
-        }
-
-        timePerPercentage /= deaths.size();
-
-        return formatSeconds((int) timePerPercentage, false);
+        double timePerPercentage = getTimePerPercentage(deaths);
+    
+        int tpp = (int) (timePerPercentage * 1000);
+        timePerPercentage = tpp / 1000.0;
+    
+        return timePerPercentage + " seconds";
     }
-
+    
     private String totalTime(List<Death> deaths) {
         int totalSeconds = 0;
-
+    
         for (Death death : deaths) {
             totalSeconds += death.getTime();
         }
-
+    
         return formatSeconds(totalSeconds, true);
     }
-
+    
     private String formatSeconds(int totalSeconds, boolean displayHours) {
         int hours = totalSeconds / 3600;
         int minutes = (totalSeconds % 3600) / 60;
         int seconds = totalSeconds % 60;
-
-        if(displayHours) {
+    
+        if (displayHours) {
             return String.format("%03d:%02d:%02d", hours, minutes, seconds);
         } else {
             return String.format("%02d:%02d", minutes, seconds);

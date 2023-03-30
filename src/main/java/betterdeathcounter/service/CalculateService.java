@@ -114,7 +114,7 @@ public class CalculateService {
         int j1 = 0;
         for(int i = 0; i < deaths.size(); i++) {
             int index = i;
-            if(deaths.get(i).getPercentage() > (index + 0.0) * linearSlope * garbageFactor + linearY) {
+            if(garbageFactor > 0 && deaths.get(i).getPercentage() > (index + 0.0) * linearSlope * garbageFactor + linearY) {
                 continue;
             }
             x1.add(index+1);
@@ -134,7 +134,7 @@ public class CalculateService {
         for(int i = 0; i < deaths.size(); i++) {
             int index = i;
             x.add(index+1);
-            if(deaths.get(i).getPercentage() > index * linearSlope * garbageFactor + linearY) {
+            if(garbageFactor > 0 && deaths.get(i).getPercentage() > index * linearSlope * garbageFactor + linearY) {
                 y.add(Math.log(replaceSlope*index + replaceIntercept));
             } else {
                 double percentage = deaths.get(index).getPercentage();
