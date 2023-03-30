@@ -77,13 +77,17 @@ public class DeathController implements Controller {
             totalTime.setText(totalTime(player.getCurrentBoss().getDeaths()));
         }
 
-
         /*
          * Button actions
          */
         final Button newDeath = (Button) parent.lookup("#newDeath");
         final Button secondPhase = (Button) parent.lookup("#secondPhase");
         final JFXSlider percentageSlider = (JFXSlider) parent.lookup("#percentageSlider");
+
+        secondPhase.setVisible(false);
+        if (boss.getSecondPhase()) {
+            percentageSlider.setMax(200);
+        }
 
         newDeath.setOnAction(e -> {
             int percentage = percentageSlider.valueProperty().intValue();
