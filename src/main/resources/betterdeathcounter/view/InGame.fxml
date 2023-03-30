@@ -59,10 +59,16 @@
                         <RadioMenuItem id="timer" mnemonicParsing="false" text="Toggle timer" />
                      </items>
                   </Menu>
-                  <Menu id="schusch" mnemonicParsing="false" text="Connect">
+                  <Menu id="connect" mnemonicParsing="false" text="Connect">
                      <items>
                         <MenuItem id="soos" mnemonicParsing="false" text="Set google API Username…" />
                         <MenuItem id="soos2" mnemonicParsing="false" text="Connect game to Google sheets…" />
+                     </items>
+                  </Menu>
+                  <Menu id="a" mnemonicParsing="false" text="About…">
+                     <items>
+                        <MenuItem id="about" mnemonicParsing="false" text="Show about" />
+                        <MenuItem id="about" mnemonicParsing="false" text="Show Boss stats" />
                      </items>
                   </Menu>
                </menus>

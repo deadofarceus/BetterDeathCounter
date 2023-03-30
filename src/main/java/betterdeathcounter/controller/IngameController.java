@@ -1,6 +1,5 @@
 package betterdeathcounter.controller;
 
-import java.awt.Toolkit;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -17,26 +16,20 @@ import betterdeathcounter.model.Death;
 import betterdeathcounter.model.Game;
 import betterdeathcounter.model.Player;
 import betterdeathcounter.service.IandOService;
+import betterdeathcounter.subscenes.AboutScene;
+import betterdeathcounter.subscenes.BossStatsScene;
+import betterdeathcounter.subscenes.SpecificDeathScene;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
-import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.RadioMenuItem;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
-import javafx.stage.Stage;
 
 public class IngameController implements Controller {
 
@@ -76,6 +69,9 @@ public class IngameController implements Controller {
     public Parent render() throws IOException {
         final Parent parent = FXMLLoader.load(Main.class.getResource("view/InGame.fxml"));
 
+        //make the stage clickable so the | thing gets out of the textfield
+        app.getStage().getScene().setOnMouseClicked(event ->{});
+        
         /*
          * Menu Actions
          */
@@ -85,32 +81,38 @@ public class IngameController implements Controller {
         final Menu edit = optionBar.getMenus().get(1);
         final Menu graph = optionBar.getMenus().get(2);
         final Menu connect = optionBar.getMenus().get(3);
+        final Menu about = optionBar.getMenus().get(4);
 
         /*
          * FILE MENU
          */
-        initializeFileMenuItems(file);
+        renderFileMenuItems(file);
 
         /*
          * EDIT MENU
          */
-        initializeEditMenuItems(edit, parent);
+        renderEditMenuItems(edit);
         
         /*
          * Graph Menu
          */
-        initializeGraphMenuItems(graph);
+        renderGraphMenuItems(graph);
 
         /*
          * Connect Menu
          */
-        initializeConnectMenuItems(connect);
+        renderConnectMenuItems(connect);
+
+        /*
+         * About Menu
+         */
+        renderAboutMenu(about);
 
         /*
          * Ingame Screen
          */
         final AnchorPane anchor = (AnchorPane) parent.lookup("#anchor");
-        initializeIngameScreen(anchor);
+        renderIngameScreen(anchor);
         
         return parent;
     }
@@ -135,7 +137,7 @@ public class IngameController implements Controller {
         }
     }
 
-    private void initializeFileMenuItems(Menu file) {
+    private void renderFileMenuItems(Menu file) {
         final Menu openOtherPlayer = (Menu) file.getItems().get(0);
         final MenuItem openFromExcel = file.getItems().get(1);
         final MenuItem save = file.getItems().get(3);
@@ -234,13 +236,15 @@ public class IngameController implements Controller {
         }
     }
 
-    private void initializeEditMenuItems(Menu edit, Parent parent) {
+    private void renderEditMenuItems(Menu edit) {
         final MenuItem newGame = edit.getItems().get(0);
         final MenuItem newBoss = edit.getItems().get(1);
         final Menu changeGame = (Menu) edit.getItems().get(3);
         final Menu changeBoss = (Menu) edit.getItems().get(4);
         final MenuItem deleteLastDeath = edit.getItems().get(6);
         final MenuItem deleteSpecificDeath = edit.getItems().get(7);
+
+        final SpecificDeathScene specificDeathScene = new SpecificDeathScene(app);
 
         newGame.setOnAction(e -> handleNewGame(changeGame, changeBoss));
 
@@ -260,7 +264,7 @@ public class IngameController implements Controller {
 
         deleteLastDeath.setOnAction(e -> handleDeleteLastDeath());
 
-        deleteSpecificDeath.setOnAction(e -> handleDeleteSpecificDeath(parent));
+        deleteSpecificDeath.setOnAction(e -> specificDeathScene.showDeleteSpecificDeath(player));
 
     }
 
@@ -400,74 +404,7 @@ public class IngameController implements Controller {
         }
     }
 
-    private void handleDeleteSpecificDeath(Parent parent) {
-        parent.setDisable(true);
-        app.getStage().getScene().setOnMouseClicked(event -> {
-            Toolkit.getDefaultToolkit().beep();
-        });
-        
-        Boss currentBoss = player.getCurrentBoss();
-        List<Death> deaths = currentBoss.getDeaths();
-
-        if (deaths.isEmpty()) {
-            Alert exitDialog = new Alert(Alert.AlertType.ERROR);
-            exitDialog.setTitle("No Deaths for this Boss");
-            exitDialog.setContentText("There are no deaths to delete.");
-            exitDialog.showAndWait();
-            return;
-        }
-        
-        VBox deathsPane = new VBox();
-        deathsPane.setSpacing(5);
-        deathsPane.setStyle("-fx-background-color: #1f85de;");
-        deathsPane.setPadding(new Insets(10));
-
-        int i = 0;
-        for (int j = 0; j < deaths.size(); j+=5) {
-            HBox deathrow = new HBox();
-            deathrow = new HBox();
-            deathrow.setSpacing(10);
-            for (int k = 0; k < 5; k++) {
-                if (j+k >= deaths.size()) {
-                    break;
-                }
-                Death death = deaths.get(j+k);
-                Label deathLabel = new Label("No. " + i+1 + ": " + death.getPercentage() + "%");
-                deathLabel.setPadding(new Insets(5));
-                deathLabel.setStyle("-fx-font-size: 18px; -fx-background-color: #0b2fb0; -fx-border-color: #de781f; -fx-border-width: 2px;");
-                deathLabel.setTextFill(Color.web("#f2f2f2"));
-                deathLabel.setPrefSize(150, 50);
-                deathLabel.setAlignment(Pos.CENTER);
-                deathLabel.setOnMouseClicked(event -> {
-                    currentBoss.withoutDeaths(death);
-                    deathsPane.getScene().getWindow().hide();
-                    System.out.println("Death deleted: " + death.getPercentage());
-                });
-                deathrow.getChildren().add(deathLabel);
-            }
-            deathsPane.getChildren().add(deathrow);
-            i++;
-        }
-        
-        ScrollPane scrollPane = new ScrollPane(deathsPane);
-        scrollPane.setFitToWidth(true);
-        scrollPane.setPrefHeight(420);
-        
-        Scene scene = new Scene(scrollPane);
-        scene.setFill(Color.web("#1f85de"));
-
-        Stage stage = new Stage();
-        stage.setTitle("Delete Death");
-        stage.setScene(scene);
-        stage.setAlwaysOnTop(true);
-        stage.setResizable(false);
-        stage.showAndWait();
-
-        parent.setDisable(false);
-        app.getStage().getScene().setOnMouseClicked(event ->{});
-    }
-
-    private void initializeGraphMenuItems(Menu graph) {
+    private void renderGraphMenuItems(Menu graph) {
         final RadioMenuItem linear = (RadioMenuItem) graph.getItems().get(0);
         final RadioMenuItem exp = (RadioMenuItem) graph.getItems().get(1);
         final RadioMenuItem timer = (RadioMenuItem) graph.getItems().get(2);
@@ -489,7 +426,7 @@ public class IngameController implements Controller {
         });
     }
     
-    private void initializeConnectMenuItems(Menu connect) {
+    private void renderConnectMenuItems(Menu connect) {
         final MenuItem googleUsernameMenuItem = connect.getItems().get(0);
         final MenuItem googleSheets = connect.getItems().get(1);
 
@@ -523,7 +460,18 @@ public class IngameController implements Controller {
         result.ifPresent(spreadsheetId -> currentGame.setSpreadsheetId(spreadsheetId));
     }
 
-    private void initializeIngameScreen(AnchorPane anchor) throws IOException {
+    private void renderAboutMenu(Menu about) {
+        final MenuItem aboutMenuItem = about.getItems().get(0);
+        final MenuItem bossStatsMenuItem = about.getItems().get(1);
+
+        final AboutScene aboutScene = new AboutScene(app);
+        final BossStatsScene bossStatsScene = new BossStatsScene(app);
+
+        aboutMenuItem.setOnAction(e -> aboutScene.showAbout());
+        bossStatsMenuItem.setOnAction(e -> bossStatsScene.showBossStats(player));
+    }
+
+    private void renderIngameScreen(AnchorPane anchor) throws IOException {
         isc = new IngameScreenController(player);
         anchor.getChildren().add(isc.render());
     }

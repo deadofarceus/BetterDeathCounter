@@ -1,0 +1,50 @@
+.root {
+    -fx-background-color: #25282D;
+}
+
+.name-label {
+    -fx-background-color: #373B40;
+    -fx-background-radius: 10px;
+    -fx-padding: 10px 20px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.5), 10, 0, 0, 0);
+    -fx-text-fill: white;
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-alignment: center;
+    -fx-text-alignment: center;
+}
+
+.info-label {
+    -fx-background-color: #373B40;
+    -fx-background-radius: 10px;
+    -fx-padding: 5px 10px;
+    -fx-effect: dropshadow(gaussian, #7F8C8D, 5, 0, 0, 2);
+    -fx-text-fill: white;
+    -fx-text-alignment: center;
+    -fx-font-size: 14px;
+    -fx-width: 200px;
+}
+
+.thanks-label {
+    -fx-background-color: #373B40;
+    -fx-background-radius: 10px;
+    -fx-padding: 5px 10px;
+    -fx-effect: dropshadow(gaussian, #7F8C8D, 5, 0, 0, 2);
+    -fx-text-fill: white;
+    -fx-text-alignment: center;
+    -fx-font-size: 11pt;
+    -fx-text-alignment: center;
+}
+
+.button {
+    -fx-background-color: #4CAF50;
+    -fx-text-fill: white;
+    -fx-background-radius: 5px;
+    -fx-padding: 5px 10px;
+    -fx-font-size: 14px;
+    -fx-effect: dropshadow(gaussian, #7F8C8D, 5, 0, 0, 2);
+}
+
+.button:hover {
+    -fx-background-color: #3E8E41;
+}
