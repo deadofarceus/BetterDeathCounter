@@ -22,6 +22,7 @@ public class BossStatsScene {
 
     final App app;
     private final CalculateService calculateService = new CalculateService();
+    private double timePerPercentage;
 
     public BossStatsScene(App app) {
         this.app = app;
@@ -37,6 +38,7 @@ public class BossStatsScene {
         double[] regressionInfos = calculateService.getRegressionInfos(player);
         double[] pred = boss.getPrediction();
         List<Death> deaths = boss.getDeaths();
+        timePerPercentage = getTimePerPercentage(deaths);
 
         int lastTry;
         String tillDefeated;
@@ -47,8 +49,6 @@ public class BossStatsScene {
             lastTry = (int) regressionInfos[5];
             tillDefeated = timeTillDefeated(boss.getDeaths(), regressionInfos);
         }
-
-
 
         List<String> infoLabels = List.of(
             "Number of deaths: \n" + deaths.size(),
@@ -103,18 +103,34 @@ public class BossStatsScene {
     }
 
     private String timeTillDefeatedPred(List<Death> deaths, double[] pred) {
-        double timePerPercentage = getTimePerPercentage(deaths);
-    
         int totalSeconds = 0;
     
-        for (double d : pred) {
-            totalSeconds += d*timePerPercentage;
-        }
-    
+        
         for (Death death : deaths) {
-            totalSeconds += death.getTime();
+            int percentage = death.getPercentage();
+            if (death.getTime() != 0) {
+                totalSeconds += death.getTime();
+            } else {
+                Death nearest = null;
+                for (Death d : deaths) {
+                    double diff = Math.abs(d.getPercentage() - percentage);
+                    if(diff < 5 && (nearest == null || diff < Math.abs(nearest.getPercentage()-percentage))
+                        && d.getTime() != 0) {
+                        nearest = d;
+                    }
+                }
+                if (nearest != null ) {
+                    totalSeconds += nearest.getTime();
+                } else {
+                    totalSeconds += timePerPercentage*percentage;
+                }
+            }
         }
-    
+
+        for (double d : pred) {
+            totalSeconds += (100 - d)*timePerPercentage;
+        }
+        
         return formatSeconds(totalSeconds, true);
     }
 
@@ -129,36 +145,67 @@ public class BossStatsScene {
     private double getTimePerPercentage(List<Death> deaths) {
         double timePerPercentage = 0.0;
     
+        int numUsedDeaths = 0;
         for (Death death : deaths) {
+            int percentage = 100 - death.getPercentage();
             if (death.getTime() != 0) {
-                timePerPercentage += death.getTime() / death.getPercentage();
+                timePerPercentage += (double) death.getTime() / percentage;
+                numUsedDeaths++;
+            } else {
+                Death nearest = null;
+                for (Death d : deaths) {
+                    double diff = Math.abs(d.getPercentage() - percentage);
+                    if(diff < 5 && (nearest == null || diff < Math.abs(nearest.getPercentage()-percentage))
+                        && d.getTime() != 0) {
+                        nearest = d;
+                    }
+                }
+                if (nearest != null) {
+                    timePerPercentage += (double) nearest.getTime() / percentage;
+                    numUsedDeaths++;
+                }
             }
         }
     
-        return timePerPercentage / deaths.size();
+        return timePerPercentage / numUsedDeaths;
     }
     
     private String timeTillDefeated(List<Death> deaths, double[] regressionInfos) {
-        double timePerPercentage = getTimePerPercentage(deaths);
-    
         int totalSeconds = 0;
+        
+        for (Death death : deaths) {
+            int percentage = 100 - death.getPercentage();
+            if (death.getTime() != 0) {
+                totalSeconds += death.getTime();
+            } else {
+                Death nearest = null;
+                for (Death d : deaths) {
+                    double diff = Math.abs(d.getPercentage() - percentage);
+                    if(diff < 5 && (nearest == null || diff < Math.abs(nearest.getPercentage()-percentage))
+                        && d.getTime() != 0) {
+                        nearest = d;
+                    }
+                }
+                if (nearest != null) {
+                    totalSeconds += nearest.getTime();
+                } else {
+                    totalSeconds += timePerPercentage*percentage;
+                }
+            }
+        }
+        System.out.println(totalSeconds);
         final double expSlope = regressionInfos[3];
         final double expY = regressionInfos[4];
     
         for (int i = deaths.size(); i < regressionInfos[5]; i++) {
-            totalSeconds += (int) ((expY - Math.exp(expSlope * i)) * timePerPercentage);
+            totalSeconds += (int) ((100-(expY - Math.exp(expSlope * i))) * timePerPercentage);
         }
-    
-        for (Death death : deaths) {
-            totalSeconds += death.getTime();
-        }
+        System.out.println(totalSeconds);
     
         return formatSeconds(totalSeconds, true);
     }
     
     private String timefrom100to0(List<Death> deaths) {
-        double timePerPercentage = getTimePerPercentage(deaths);
-    
         return formatSeconds((int) (timePerPercentage * 100), true);
     }
     
@@ -173,11 +220,28 @@ public class BossStatsScene {
     
     private String totalTime(List<Death> deaths) {
         int totalSeconds = 0;
-    
+
         for (Death death : deaths) {
-            totalSeconds += death.getTime();
+            int percentage = 100 - death.getPercentage();
+            if (death.getTime() != 0) {
+                totalSeconds += death.getTime();
+            } else {
+                Death nearest = null;
+                for (Death d : deaths) {
+                    double diff = Math.abs(d.getPercentage() - percentage);
+                    if(diff < 5 && (nearest == null || diff < Math.abs(nearest.getPercentage()-percentage))
+                        && d.getTime() != 0) {
+                        nearest = d;
+                    }
+                }
+                if (nearest != null) {
+                    totalSeconds += nearest.getTime();
+                } else {
+                    totalSeconds += timePerPercentage*percentage;
+                }
+            }
         }
-    
+
         return formatSeconds(totalSeconds, true);
     }
     

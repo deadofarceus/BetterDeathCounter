@@ -83,6 +83,7 @@ public class IngameScreenController implements Controller {
                 deathController = new DeathController(player.getCurrentBoss(), player);
                 
                 player.getCurrentBoss().listeners().addPropertyChangeListener(Boss.PROPERTY_DEATHS, deathListener);
+                player.getCurrentBoss().listeners().addPropertyChangeListener(Boss.PROPERTY_PREDICTION, deathListener);
             } else if (!e.getPropertyName().equals(Settings.PROPERTY_USE_COSTUM_PREDICTION)) {
                 deathController.destroy();
                 deathController = new DeathController(player.getCurrentBoss(), player);

@@ -8,7 +8,7 @@
 
 <VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="345.0" prefWidth="437.0" spacing="5.0" stylesheets="@../style/stylesheet.css" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml">
    <children>
-      <VBox alignment="CENTER" prefHeight="125.0" prefWidth="420.0" spacing="5.0">
+      <VBox alignment="CENTER" prefHeight="125.0" prefWidth="420.0" spacing="15.0">
          <children>
             <Button id="newDeath" mnemonicParsing="false" prefHeight="90.0" prefWidth="370.0" styleClass="buttonPrimary" text="NEW DEATH: 100%" textAlignment="CENTER">
                <font>

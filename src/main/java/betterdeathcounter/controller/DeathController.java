@@ -59,7 +59,7 @@ public class DeathController implements Controller {
         final Text timerText = (Text) parent.lookup("#timerText");
         final Text totalTime = (Text) parent.lookup("#totalTime");
 
-        if(settings.getShowTimer()) {
+        if(settings.getShowTimer() && !boss.getName().equals("Other Monsters or Heights")) { 
             timerText.setText(String.format("%02d:%02d", elapsedMinutes, secondsDisplay));
             timerThread = new Thread(() -> {
                 while (!shutdown) {
@@ -75,7 +75,6 @@ public class DeathController implements Controller {
                 }
             });
             timerThread.start();
-        
 
             totalTime.setText(totalTime(player.getCurrentBoss().getDeaths()));
         }
@@ -115,10 +114,9 @@ public class DeathController implements Controller {
             else {
                 Death nearest = null;
                 for (Death death : player.getCurrentBoss().getDeaths()) {
-                    if(death.getPercentage() - 5 < percentage && percentage < death.getPercentage() +5) {
-                        if(nearest == null || nearest.getPercentage()-percentage > death.getPercentage()-percentage) {
-                            nearest = death;
-                        }
+                    double diff = Math.abs(death.getPercentage() - percentage);
+                    if(diff < 5 && (nearest == null || diff < Math.abs(nearest.getPercentage()-percentage))) {
+                        nearest = death;
                     }
                 }
 
