@@ -10,7 +10,7 @@
 /tmp/
 
 /tokens/
-/src/main/resources/betterdeathcounter/credentials.json
+/google/credentials.json
 /data/*.yaml
 /graphs/*/*.png
 

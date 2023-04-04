@@ -1,5 +1,6 @@
 package betterdeathcounter.service;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -22,7 +23,6 @@ import com.google.api.services.sheets.v4.SheetsScopes;
 import com.google.api.services.sheets.v4.model.UpdateValuesResponse;
 import com.google.api.services.sheets.v4.model.ValueRange;
 
-import betterdeathcounter.Main;
 import betterdeathcounter.model.Boss;
 import betterdeathcounter.model.Game;
 
@@ -36,7 +36,7 @@ public class APIService {
 
     private static final List<String> SCOPES =
         Collections.singletonList(SheetsScopes.SPREADSHEETS);
-    private static final String CREDENTIALS_FILE_PATH = "credentials.json";
+    private static final String CREDENTIALS_FILE_PATH = "google/credentials.json";
 
     public void sendData(Game game, Boss boss) throws GeneralSecurityException, IOException {
         final String spreadsheetId = game.getSpreadsheetId();
@@ -68,16 +68,16 @@ public class APIService {
         System.out.println(response.getUpdatedCells() + " cells succesfull updated");
         System.out.println();
     }
-
     
     private Credential authorize() throws IOException, GeneralSecurityException {
-        InputStream in = Main.class.getResourceAsStream(CREDENTIALS_FILE_PATH);
-        if (in == null) {
+        InputStream in = new FileInputStream(CREDENTIALS_FILE_PATH);;
+        if (in.available() == 0) {
             System.out.println("Resource not found: " + CREDENTIALS_FILE_PATH);
             System.out.println("Please add your google Cresentials here: " +
                 "resources/credentials.json");
             System.out.println("If you dont now how look here: ");
             System.out.println("https://developers.google.com/sheets/api/quickstart/java");
+            in.close();
             return null;
         }
 
