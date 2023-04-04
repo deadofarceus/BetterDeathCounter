@@ -37,7 +37,7 @@ public class BossCostumPredController implements Controller {
 
     @Override
     public void init() {
-        double[] pred = myPredictionService.getMYPredictions(boss.getDeaths(), settings);
+        double[] pred = myPredictionService.getMYPredictions(boss, settings);
         boss.setPrediction(pred);
         if (pred.length == 0) {
             return;
@@ -126,13 +126,13 @@ public class BossCostumPredController implements Controller {
          * Prediction Listener
          */
         predInfoListener = e -> {
-            double[] pred = myPredictionService.getMYPredictions(boss.getDeaths(), settings);
+            double[] pred = myPredictionService.getMYPredictions(boss, settings);
             boss.setPrediction(pred);
             if (pred.length == 0) {
-                return;
+                myPredInfos = new double[]{};
+            } else {
+                myPredInfos = myPredictionService.getPredInfos(boss.getDeaths(), settings, pred[pred.length-1]);
             }
-            myPredInfos = myPredictionService.getPredInfos(boss.getDeaths(), settings, pred[pred.length-1]);
-            
             if (myPredInfos.length != 0) {
                 predInfoText.setText(String.format("Next PB: %d\nCurrent Mean: %d", 
                                                    (int)myPredInfos[0], (int)myPredInfos[1]));
@@ -151,16 +151,17 @@ public class BossCostumPredController implements Controller {
          * Boss Listener
          */
         deathListener = e -> {
-            double[] pred = myPredictionService.getMYPredictions(boss.getDeaths(), settings);
-            boss.setPrediction(pred);
-            if (pred.length == 0) {
-                return;
-            }
-            myPredInfos = myPredictionService.getPredInfos(boss.getDeaths(), settings, pred[pred.length-1]);
-            
             int numOfDeaths = boss.getDeaths().size();
+            System.out.println("ETTESTETSTEST");
             allBossDeaths.setText("Deaths: " + numOfDeaths);
 
+            double[] pred = myPredictionService.getMYPredictions(boss, settings);
+            boss.setPrediction(pred);
+            if (pred.length == 0) {
+                myPredInfos = new double[]{};
+            } else {
+                myPredInfos = myPredictionService.getPredInfos(boss.getDeaths(), settings, pred[pred.length-1]);
+            }
             if (myPredInfos.length != 0) {
                 if (calculateService.bossDead(boss)) {
                     predInfoText.setText("You already killed that Boss!");

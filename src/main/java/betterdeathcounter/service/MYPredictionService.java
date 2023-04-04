@@ -8,6 +8,7 @@ import org.apache.commons.math3.distribution.NormalDistribution;
 import org.apache.commons.math3.stat.descriptive.moment.Mean;
 import org.apache.commons.math3.stat.descriptive.moment.StandardDeviation;
 
+import betterdeathcounter.model.Boss;
 import betterdeathcounter.model.Death;
 import betterdeathcounter.model.Settings;
 
@@ -20,9 +21,11 @@ public class MYPredictionService {
     private static final int MAX_VALUE = Integer.MAX_VALUE;
     private static final int PB_RANGE_THRESHOLD = 6;
 
-    public double[] getMYPredictions(List<Death> deaths, Settings settings) {
-
-        if (deaths.size() < 9 || settings.getNumBadTrys() < 1) {
+    public double[] getMYPredictions(Boss boss, Settings settings) {
+        List<Death> deaths = boss.getDeaths();
+        if (deaths.size() < 9 || settings.getNumBadTrys() < 1 
+            || boss.getName().equals("Other Monsters or Heights") 
+            || boss.getName().equals("Please create a new game")) {
             return new double[]{};
         }
 
