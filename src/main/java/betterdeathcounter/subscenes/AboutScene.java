@@ -79,7 +79,7 @@ public class AboutScene {
 
         vbox.getChildren().add(closeButton);
 
-        Scene scene = new Scene(vbox, 400, 300);
+        Scene scene = new Scene(vbox, 500, 375);
 
         scene.getStylesheets().add(Main.class.getResource("style/AboutStyle.css").toString());
         

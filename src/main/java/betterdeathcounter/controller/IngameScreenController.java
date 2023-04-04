@@ -6,6 +6,7 @@ import java.io.IOException;
 import betterdeathcounter.Main;
 import betterdeathcounter.model.Boss;
 import betterdeathcounter.model.Player;
+import betterdeathcounter.model.Settings;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.ScrollPane;
@@ -15,11 +16,13 @@ import javafx.scene.layout.HBox;
 public class IngameScreenController implements Controller {
 
     private final Player player;
+    private final Settings settings;
     private PropertyChangeListener bossListener, deathListener, timerListener;
     private Controller gameController, bossController, deathController, progressChartController;
 
     public IngameScreenController(Player player) {
         this.player = player;
+        this.settings = player.getSettings();
     }
 
     @Override
@@ -40,7 +43,11 @@ public class IngameScreenController implements Controller {
         gameController = new GameController(player);
         actionBox.getChildren().add(gameController.render());
 
-        bossController = new BossController(player, player.getCurrentBoss());
+        if (settings.getUseCostumPrediction()) {
+            bossController = new BossCostumPredController(player, player.getCurrentBoss());
+        } else {
+            bossController = new BossController(player, player.getCurrentBoss());
+        }
         bossController.init();
         actionBox.getChildren().add(bossController.render());
 
@@ -68,15 +75,21 @@ public class IngameScreenController implements Controller {
         };
 
         bossListener = e -> {
-            ((Boss) e.getOldValue()).listeners().removePropertyChangeListener(Boss.PROPERTY_DEATHS, deathListener);
-            player.getCurrentBoss().listeners().addPropertyChangeListener(Boss.PROPERTY_DEATHS, deathListener);
+            if(e.getPropertyName().equals(Player.PROPERTY_CURRENT_BOSS)) {
+                ((Boss) e.getOldValue()).listeners().removePropertyChangeListener(Boss.PROPERTY_DEATHS, deathListener);
+                player.getCurrentBoss().listeners().addPropertyChangeListener(Boss.PROPERTY_DEATHS, deathListener);
+            } else if (!e.getPropertyName().equals(Settings.PROPERTY_USE_COSTUM_PREDICTION)) {
+                deathController.destroy();
+                deathController = new DeathController(player.getCurrentBoss(), player);
+            }
 
             bossController.destroy();
-            bossController = new BossController(player, player.getCurrentBoss());
+            if (settings.getUseCostumPrediction()) {
+                bossController = new BossCostumPredController(player, player.getCurrentBoss());
+            } else {
+                bossController = new BossController(player, player.getCurrentBoss());
+            }
             bossController.init();
-
-            deathController.destroy();
-            deathController = new DeathController(player.getCurrentBoss(), player);
 
             progressChartController.destroy();
             progressChartController = new ProgressChartController(player);
@@ -84,7 +97,9 @@ public class IngameScreenController implements Controller {
 
             try {
                 actionBox.getChildren().set(1, bossController.render());
-                actionBox.getChildren().set(2, deathController.render());
+                if (!e.getPropertyName().equals(Settings.PROPERTY_USE_COSTUM_PREDICTION)) {
+                    actionBox.getChildren().set(2, deathController.render());
+                }
                 ap.getChildren().set(0, progressChartController.render());
             } catch (IOException ignored) {}
         };
@@ -99,11 +114,13 @@ public class IngameScreenController implements Controller {
         };
 
         player.listeners().addPropertyChangeListener(Player.PROPERTY_CURRENT_BOSS, bossListener);
-        player.listeners().addPropertyChangeListener(Player.PROPERTY_SHOW_TIMER, timerListener);
-        player.listeners().addPropertyChangeListener(Player.PROPERTY_GARBAGE_FACTOR, deathListener);
-        player.listeners().addPropertyChangeListener(Player.PROPERTY_SHOW_EXP, deathListener);
-        player.listeners().addPropertyChangeListener(Player.PROPERTY_SHOW_LINEAR, deathListener);
         player.getCurrentBoss().listeners().addPropertyChangeListener(Boss.PROPERTY_DEATHS, deathListener);
+        player.getCurrentBoss().listeners().addPropertyChangeListener(Boss.PROPERTY_PREDICTION, deathListener);
+        settings.listeners().addPropertyChangeListener(Settings.PROPERTY_SHOW_TIMER, timerListener);
+        settings.listeners().addPropertyChangeListener(Settings.PROPERTY_GARBAGE_FACTOR, deathListener);
+        settings.listeners().addPropertyChangeListener(Settings.PROPERTY_SHOW_EXP, deathListener);
+        settings.listeners().addPropertyChangeListener(Settings.PROPERTY_SHOW_LINEAR, deathListener);
+        settings.listeners().addPropertyChangeListener(Settings.PROPERTY_USE_COSTUM_PREDICTION, bossListener);
 
         return parent;
     }
@@ -116,11 +133,13 @@ public class IngameScreenController implements Controller {
         progressChartController.destroy();
 
         player.listeners().removePropertyChangeListener(Player.PROPERTY_CURRENT_BOSS, bossListener);
-        player.listeners().removePropertyChangeListener(Player.PROPERTY_SHOW_TIMER, timerListener);
-        player.listeners().removePropertyChangeListener(Player.PROPERTY_GARBAGE_FACTOR, deathListener);
-        player.listeners().removePropertyChangeListener(Player.PROPERTY_SHOW_EXP, deathListener);
-        player.listeners().removePropertyChangeListener(Player.PROPERTY_SHOW_LINEAR, deathListener);
         player.getCurrentBoss().listeners().removePropertyChangeListener(Boss.PROPERTY_DEATHS, deathListener);
+        player.getCurrentBoss().listeners().removePropertyChangeListener(Boss.PROPERTY_PREDICTION, deathListener);
+        settings.listeners().removePropertyChangeListener(Settings.PROPERTY_SHOW_TIMER, timerListener);
+        settings.listeners().removePropertyChangeListener(Settings.PROPERTY_GARBAGE_FACTOR, deathListener);
+        settings.listeners().removePropertyChangeListener(Settings.PROPERTY_SHOW_EXP, deathListener);
+        settings.listeners().removePropertyChangeListener(Settings.PROPERTY_SHOW_LINEAR, deathListener);
+        settings.listeners().removePropertyChangeListener(Settings.PROPERTY_USE_COSTUM_PREDICTION, bossListener);
     }
     
 }

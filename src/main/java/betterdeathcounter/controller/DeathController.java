@@ -10,6 +10,7 @@ import betterdeathcounter.Main;
 import betterdeathcounter.model.Boss;
 import betterdeathcounter.model.Death;
 import betterdeathcounter.model.Player;
+import betterdeathcounter.model.Settings;
 import betterdeathcounter.service.APIService;
 import betterdeathcounter.service.CalculateService;
 import javafx.application.Platform;
@@ -20,10 +21,11 @@ import javafx.scene.text.Text;
 
 public class DeathController implements Controller {
 
+    private final Player player;
+    private final Settings settings;
     private final Boss boss;
     private final CalculateService calculateService = new CalculateService();
     private final APIService apiService = new APIService();
-    private final Player player;
     private long startTime = System.currentTimeMillis();
     private long elapsedTime = System.currentTimeMillis() - startTime;
     private long elapsedSeconds = elapsedTime / 1000;
@@ -35,6 +37,7 @@ public class DeathController implements Controller {
     public DeathController(Boss boss, Player player) {
         this.boss = boss;
         this.player = player;
+        this.settings = player.getSettings();
     }
 
     @Override
@@ -56,7 +59,7 @@ public class DeathController implements Controller {
         final Text timerText = (Text) parent.lookup("#timerText");
         final Text totalTime = (Text) parent.lookup("#totalTime");
 
-        if(player.getShowTimer()) {
+        if(settings.getShowTimer()) {
             timerText.setText(String.format("%02d:%02d", elapsedMinutes, secondsDisplay));
             timerThread = new Thread(() -> {
                 while (!shutdown) {
@@ -90,10 +93,25 @@ public class DeathController implements Controller {
         }
 
         newDeath.setOnAction(e -> {
+
+            // try {
+            //     BufferedWriter writer = new BufferedWriter(new FileWriter("C:/Users/NiKi/Desktop/Coding/deaths.txt"));
+            //     StringBuilder sb = new StringBuilder();
+            //     for (Death i : boss.getDeaths()) {
+            //         sb.append(i.getPercentage()).append(", ");
+            //     }
+            //     sb.setLength(sb.length() - 2);  // remove trailing comma and space
+            //     writer.write(sb.toString());
+            //     writer.close();
+            // } catch (IOException e1) {
+            //     e1.printStackTrace();
+            // }
+
+            
             int percentage = percentageSlider.valueProperty().intValue();
             Death d = new Death().setPercentage(percentage);
 
-            if(elapsedSeconds > 30) d.setTime((int)elapsedSeconds);
+            if(elapsedTime > 30) d.setTime((int)elapsedTime);
             else {
                 Death nearest = null;
                 for (Death death : player.getCurrentBoss().getDeaths()) {
@@ -109,7 +127,7 @@ public class DeathController implements Controller {
                 }
             }
 
-            if(player.getShowTimer()) {
+            if(settings.getShowTimer()) {
                 startTime = System.currentTimeMillis();
             }
 
@@ -121,7 +139,7 @@ public class DeathController implements Controller {
 
                     new Thread(() -> {
                         try {
-                            if (player.getCurrentGame().getSpreadsheetId() != null && player.getAPIUsername() != null) {
+                            if (player.getCurrentGame().getSpreadsheetId() != null && settings.getAPIUsername() != null) {
                                 apiService.sendData(player.getCurrentGame(), boss);
                             } else {
                                 System.out.println("No connection to google service!");
@@ -137,7 +155,7 @@ public class DeathController implements Controller {
                     System.out.println("New Death: " + d.getPercentage());
                 }
             }
-
+            
             totalTime.setText(totalTime(player.getCurrentBoss().getDeaths()));
         });
     

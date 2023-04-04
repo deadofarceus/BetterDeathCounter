@@ -8,6 +8,7 @@ import com.jfoenix.controls.JFXSlider;
 import betterdeathcounter.Main;
 import betterdeathcounter.model.Boss;
 import betterdeathcounter.model.Player;
+import betterdeathcounter.model.Settings;
 import betterdeathcounter.service.CalculateService;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -17,6 +18,7 @@ import javafx.scene.text.Text;
 public class BossController implements Controller {
 
     private final Player player;
+    private final Settings settings;
     private final Boss boss;
     private final CalculateService calculateService = new CalculateService();
     private PropertyChangeListener deathListener, garbageListener;
@@ -25,6 +27,7 @@ public class BossController implements Controller {
     public BossController(Player player, Boss boss) {
         this.player = player;
         this.boss = boss;
+        this.settings = player.getSettings();
     }
 
     @Override
@@ -75,15 +78,15 @@ public class BossController implements Controller {
             } else {
                 adjustRegression.setText(Double.toString(newValue.doubleValue()));
             }
-            player.setGarbageFactor(newValue.doubleValue());
+            settings.setGarbageFactor(newValue.doubleValue());
         });
 
         adjustRegression.textProperty().addListener((observable, oldValue, newValue) -> {
-            double garbageFactor = player.getGarbageFactor();
+            double garbageFactor = settings.getGarbageFactor();
             try {
                 garbageFactor = Double.parseDouble(newValue);
                 adjustRegression.setStyle("-fx-text-fill: green;");
-                player.setGarbageFactor(garbageFactor);
+                settings.setGarbageFactor(garbageFactor);
             } catch (NumberFormatException e) {
                 adjustRegression.setStyle("-fx-text-fill: red;");
             }
@@ -101,7 +104,7 @@ public class BossController implements Controller {
                 calculatedTrys.setText("You cant kill that Boss!");
             }
         };
-        player.listeners().addPropertyChangeListener(Player.PROPERTY_GARBAGE_FACTOR, garbageListener);
+        settings.listeners().addPropertyChangeListener(Settings.PROPERTY_GARBAGE_FACTOR, garbageListener);
 
         /*
          * Boss Listener
@@ -130,7 +133,7 @@ public class BossController implements Controller {
 
     @Override
     public void destroy() {
-        player.listeners().removePropertyChangeListener(garbageListener);
+        settings.listeners().removePropertyChangeListener(garbageListener);
         boss.listeners().removePropertyChangeListener(deathListener);
     }
     

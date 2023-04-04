@@ -32,7 +32,7 @@
     -fx-text-fill: white;
     -fx-text-alignment: center;
     -fx-font-size: 11pt;
-    -fx-text-alignment: center;
+    -fx-min-height: 80px;
 }
 
 .button {

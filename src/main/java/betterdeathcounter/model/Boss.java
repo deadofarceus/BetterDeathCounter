@@ -11,11 +11,13 @@ public class Boss
    public static final String PROPERTY_NAME = "name";
    public static final String PROPERTY_GAME = "game";
    public static final String PROPERTY_SECOND_PHASE = "secondPhase";
+   public static final String PROPERTY_PREDICTION = "prediction";
    public static final String PROPERTY_DEATHS = "deaths";
    private String name;
    private Game game;
    protected PropertyChangeSupport listeners;
    private Boolean secondPhase;
+   private double[] prediction;
    private List<Death> deaths;
 
    public String getName()
@@ -78,6 +80,24 @@ public class Boss
       final Boolean oldValue = this.secondPhase;
       this.secondPhase = value;
       this.firePropertyChange(PROPERTY_SECOND_PHASE, oldValue, value);
+      return this;
+   }
+
+   public double[] getPrediction()
+   {
+      return this.prediction;
+   }
+
+   public Boss setPrediction(double[] value)
+   {
+      if (Objects.equals(value, this.prediction))
+      {
+         return this;
+      }
+
+      final double[] oldValue = this.prediction;
+      this.prediction = value;
+      this.firePropertyChange(PROPERTY_PREDICTION, oldValue, value);
       return this;
    }
 

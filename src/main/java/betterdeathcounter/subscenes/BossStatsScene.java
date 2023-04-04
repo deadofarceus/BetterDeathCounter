@@ -35,13 +35,28 @@ public class BossStatsScene {
 
         Boss boss = player.getCurrentBoss();
         double[] regressionInfos = calculateService.getRegressionInfos(player);
+        double[] pred = boss.getPrediction();
+        List<Death> deaths = boss.getDeaths();
+
+        int lastTry;
+        String tillDefeated;
+        if (player.getSettings().getUseCostumPrediction()) {
+            lastTry = deaths.size() + pred.length;
+            tillDefeated = timeTillDefeatedPred(boss.getDeaths(), pred);
+        } else {
+            lastTry = (int) regressionInfos[5];
+            tillDefeated = timeTillDefeated(boss.getDeaths(), regressionInfos);
+        }
+
+
+
         List<String> infoLabels = List.of(
-            "Number of deaths: \n" + boss.getDeaths().size(),
-            "Expected last try: \n" + regressionInfos[5],
+            "Number of deaths: \n" + deaths.size(),
+            "Expected last try: \n" + lastTry,
             "Total spend time: \n" + totalTime(boss.getDeaths()),
             "Time per percentage: \n" + timePerPercentage(boss.getDeaths()),
             "Time from 100 to 0: \n" + timefrom100to0(boss.getDeaths()),
-            "Time till defeated: \n" + timeTillDefeated(boss.getDeaths(), regressionInfos)
+            "Time till defeated: \n" + tillDefeated
             );
     
         Stage stage = new Stage();
@@ -85,6 +100,22 @@ public class BossStatsScene {
 
         app.getStage().getScene().getRoot().setDisable(false);
         app.getStage().getScene().setOnMouseClicked(event ->{});
+    }
+
+    private String timeTillDefeatedPred(List<Death> deaths, double[] pred) {
+        double timePerPercentage = getTimePerPercentage(deaths);
+    
+        int totalSeconds = 0;
+    
+        for (double d : pred) {
+            totalSeconds += d*timePerPercentage;
+        }
+    
+        for (Death death : deaths) {
+            totalSeconds += death.getTime();
+        }
+    
+        return formatSeconds(totalSeconds, true);
     }
 
     private Label getInfoLabel(String info) {

@@ -10,21 +10,13 @@ public class Player
 {
    public static final String PROPERTY_NAME = "name";
    public static final String PROPERTY_GAMES = "games";
-   public static final String PROPERTY_GARBAGE_FACTOR = "garbageFactor";
-   public static final String PROPERTY_APIUSERNAME = "APIUsername";
-   public static final String PROPERTY_SHOW_LINEAR = "showLinear";
-   public static final String PROPERTY_SHOW_EXP = "showExp";
-   public static final String PROPERTY_SHOW_TIMER = "showTimer";
+   public static final String PROPERTY_SETTINGS = "settings";
    public static final String PROPERTY_CURRENT_GAME = "currentGame";
    public static final String PROPERTY_CURRENT_BOSS = "currentBoss";
    private String name;
    private List<Game> games;
    protected PropertyChangeSupport listeners;
-   private double garbageFactor;
-   private String APIUsername;
-   private Boolean showLinear;
-   private Boolean showExp;
-   private Boolean showTimer;
+   private Settings settings;
    private Game currentGame;
    private Boss currentBoss;
 
@@ -112,93 +104,21 @@ public class Player
       return this;
    }
 
-   public double getGarbageFactor()
+   public Settings getSettings()
    {
-      return this.garbageFactor;
+      return this.settings;
    }
 
-   public Player setGarbageFactor(double value)
+   public Player setSettings(Settings value)
    {
-      if (value == this.garbageFactor)
+      if (this.settings == value)
       {
          return this;
       }
 
-      final double oldValue = this.garbageFactor;
-      this.garbageFactor = value;
-      this.firePropertyChange(PROPERTY_GARBAGE_FACTOR, oldValue, value);
-      return this;
-   }
-
-   public String getAPIUsername()
-   {
-      return this.APIUsername;
-   }
-
-   public Player setAPIUsername(String value)
-   {
-      if (Objects.equals(value, this.APIUsername))
-      {
-         return this;
-      }
-
-      final String oldValue = this.APIUsername;
-      this.APIUsername = value;
-      this.firePropertyChange(PROPERTY_APIUSERNAME, oldValue, value);
-      return this;
-   }
-
-   public Boolean getShowLinear()
-   {
-      return this.showLinear;
-   }
-
-   public Player setShowLinear(Boolean value)
-   {
-      if (Objects.equals(value, this.showLinear))
-      {
-         return this;
-      }
-
-      final Boolean oldValue = this.showLinear;
-      this.showLinear = value;
-      this.firePropertyChange(PROPERTY_SHOW_LINEAR, oldValue, value);
-      return this;
-   }
-
-   public Boolean getShowExp()
-   {
-      return this.showExp;
-   }
-
-   public Player setShowExp(Boolean value)
-   {
-      if (Objects.equals(value, this.showExp))
-      {
-         return this;
-      }
-
-      final Boolean oldValue = this.showExp;
-      this.showExp = value;
-      this.firePropertyChange(PROPERTY_SHOW_EXP, oldValue, value);
-      return this;
-   }
-
-   public Boolean getShowTimer()
-   {
-      return this.showTimer;
-   }
-
-   public Player setShowTimer(Boolean value)
-   {
-      if (Objects.equals(value, this.showTimer))
-      {
-         return this;
-      }
-
-      final Boolean oldValue = this.showTimer;
-      this.showTimer = value;
-      this.firePropertyChange(PROPERTY_SHOW_TIMER, oldValue, value);
+      final Settings oldValue = this.settings;
+      this.settings = value;
+      this.firePropertyChange(PROPERTY_SETTINGS, oldValue, value);
       return this;
    }
 
@@ -262,14 +182,14 @@ public class Player
    {
       final StringBuilder result = new StringBuilder();
       result.append(' ').append(this.getName());
-      result.append(' ').append(this.getAPIUsername());
       return result.substring(1);
    }
 
    public void removeYou()
    {
+      this.withoutGames(new ArrayList<>(this.getGames()));
+      this.setSettings(null);
       this.setCurrentGame(null);
       this.setCurrentBoss(null);
-      this.withoutGames(new ArrayList<>(this.getGames()));
    }
 }

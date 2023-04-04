@@ -10,6 +10,33 @@ import org.fulib.builder.Type;
 
 public class GenModel implements ClassModelDecorator {
 
+    class Player {
+        String name;
+    
+        @Link
+        Settings settings;
+
+        @Link
+        Game currentGame;
+    
+        @Link
+        Boss currentBoss;
+    
+        @Link("player")
+        List<Game> games;
+    }
+
+    class Settings {
+        String APIUsername;
+        double garbageFactor;
+        double cumulativeProbabilityScaling;
+        int numBadTrys;
+        Boolean showLinear;
+        Boolean showExp;
+        Boolean showTimer;
+        Boolean useCostumPrediction;
+    }
+
     class Game {
         String name;
         String spreadsheetId;
@@ -21,27 +48,11 @@ public class GenModel implements ClassModelDecorator {
         List<Boss> bosses;
     }
 
-    class Player {
-        String name;
-        String APIUsername;
-        double garbageFactor;
-        Boolean showLinear;
-        Boolean showExp;
-        Boolean showTimer;
-
-        @Link
-        Game currentGame;
-
-        @Link
-        Boss currentBoss;
-
-        @Link("player")
-        List<Game> games;
-    }
 
     class Boss {
         String name;
         Boolean secondPhase;
+        double[] prediction;
 
         @Link("bosses")
         Game game;

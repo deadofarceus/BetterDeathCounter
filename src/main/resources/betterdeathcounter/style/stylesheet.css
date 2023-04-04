@@ -40,3 +40,100 @@
     -fx-font-size: 20;
     -fx-font-family: sans-serif;
 }
+
+.buttonPrimary {
+    -fx-background-color: #32CD32; /* Green */
+    -fx-text-fill: #FFFFFF; /* White */
+    -fx-font-size: 36px;
+    -fx-font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.3), 3, 0, 0, 1); /* Subtle shadow */
+    -fx-font-weight: bold;
+    -fx-padding: 10px 20px;
+    -fx-background-radius: 20px; /* Rounded corners */
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.3), 10, 0, 0, 0); /* Shadow effect */
+}
+
+.buttonSecondary{
+    -fx-background-color: #32CD32; /* Green */
+    -fx-text-fill: #FFFFFF; /* White */
+    -fx-font-size: 18px;
+    -fx-font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.3), 3, 0, 0, 1); /* Subtle shadow */
+    -fx-font-weight: bold;
+    -fx-padding: 10px 20px;
+    -fx-background-radius: 20px; /* Rounded corners */
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.3), 10, 0, 0, 0); /* Shadow effect */
+}
+
+.buttonTertiary {
+    -fx-background-color: #32CD32; /* Green */
+    -fx-text-fill: #FFFFFF; /* White */
+    -fx-font-size: 13px;
+    -fx-font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.3), 3, 0, 0, 1); /* Subtle shadow */
+    -fx-font-weight: bold;
+    -fx-padding: 10px 20px;
+    -fx-background-radius: 20px; /* Rounded corners */
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.3), 10, 0, 0, 0); /* Shadow effect */
+}
+  
+.buttonPrimary:hover, .buttonSecondary:hover, .buttonTertiary:hover {
+    -fx-background-color: #228B22; /* Darker green on hover */
+    -fx-cursor: hand; /* Change cursor on hover */
+}
+  
+.buttonPrimary:pressed, .buttonSecondary:pressed, .buttonTertiary:pressed {
+    -fx-background-color: #006400; /* Dark green on click */
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.3), 5, 0, 0, 0); /* Smaller shadow on click */
+}
+
+.textPrimary {
+    -fx-font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.3), 3, 0, 0, 1); /* Subtle shadow */
+}
+
+.headline {
+    -fx-font-size: 80px;
+    -fx-font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    -fx-text-fill: #ffb92c; /* White text color */
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 0, 0, 0, 2), 
+                dropshadow(gaussian, #444444, 10, 0, 0, -2); /* Inverted elevated background */
+    -fx-padding: 10px 20px; /* Padding around the text */
+    -fx-background-color: #444444; /* Elevated background color */
+    -fx-background-radius: 50px;
+  }
+
+.menu-bar {
+    -fx-background-color: #303030; /* Dark grey background */
+    -fx-font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  }
+  
+  .menu-bar .menu {
+    -fx-background-color: #303030;
+    -fx-text-fill: #FFFFFF; /* White text color */
+    -fx-font-size: 16px;
+  }
+  
+  .menu-bar .menu:hover {
+    -fx-background-color: rgba(255, 255, 255, 0.2); /* Semi-transparent white on hover */
+  }
+  
+  .menu-bar .menu .label {
+    -fx-font-weight: bold;
+    -fx-text-fill: #FFFFFF;
+  }
+  
+  .menu-bar .menu .menu-item {
+    -fx-background-color: #303030;
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size: 14px;
+  }
+
+  .menu-item .menu-item .menu {
+    -fx-background-color: #303030; /* Dark grey background */
+  }
+  
+  .menu-bar .menu .menu-item:hover {
+    -fx-background-color: rgba(0, 0, 0, 0.2); /* Semi-transparent white on hover */
+    -fx-text-fill: #FFFFFF;
+  }

@@ -15,6 +15,7 @@ import betterdeathcounter.model.Boss;
 import betterdeathcounter.model.Death;
 import betterdeathcounter.model.Game;
 import betterdeathcounter.model.Player;
+import betterdeathcounter.model.Settings;
 import betterdeathcounter.service.IandOService;
 import betterdeathcounter.subscenes.AboutScene;
 import betterdeathcounter.subscenes.BossStatsScene;
@@ -35,6 +36,7 @@ public class IngameController implements Controller {
 
     private final App app;
     private final Player player;
+    private final Settings settings;
     private final IandOService iandOService = new IandOService();
     private final ScheduledExecutorService saveScheduler = Executors.newSingleThreadScheduledExecutor();
     private List<Player> oldPlayers = new ArrayList<>();
@@ -44,6 +46,7 @@ public class IngameController implements Controller {
         this.app = app;
         this.player = player;
         this.oldPlayers = oldPlayers;
+        this.settings = player.getSettings();
     }
 
     @Override
@@ -79,7 +82,7 @@ public class IngameController implements Controller {
 
         final Menu file = optionBar.getMenus().get(0);
         final Menu edit = optionBar.getMenus().get(1);
-        final Menu graph = optionBar.getMenus().get(2);
+        final Menu setting = optionBar.getMenus().get(2);
         final Menu connect = optionBar.getMenus().get(3);
         final Menu about = optionBar.getMenus().get(4);
 
@@ -94,9 +97,9 @@ public class IngameController implements Controller {
         renderEditMenuItems(edit);
         
         /*
-         * Graph Menu
+         * Setting Menu
          */
-        renderGraphMenuItems(graph);
+        renderSettingMenuItems(setting);
 
         /*
          * Connect Menu
@@ -142,7 +145,7 @@ public class IngameController implements Controller {
         final MenuItem openFromExcel = file.getItems().get(1);
         final MenuItem save = file.getItems().get(3);
         final MenuItem saveAs = file.getItems().get(4);
-        final MenuItem savegraph = file.getItems().get(6);
+        final MenuItem savesetting = file.getItems().get(6);
         final MenuItem quit = file.getItems().get(8);
 
         for (Player oldplayer : oldPlayers) {
@@ -161,7 +164,7 @@ public class IngameController implements Controller {
 
         saveAs.setOnAction(e -> handleSaveAs());
 
-        savegraph.setOnAction(e -> {
+        savesetting.setOnAction(e -> {
             iandOService.saveGraph(player);
         });
 
@@ -404,25 +407,31 @@ public class IngameController implements Controller {
         }
     }
 
-    private void renderGraphMenuItems(Menu graph) {
-        final RadioMenuItem linear = (RadioMenuItem) graph.getItems().get(0);
-        final RadioMenuItem exp = (RadioMenuItem) graph.getItems().get(1);
-        final RadioMenuItem timer = (RadioMenuItem) graph.getItems().get(2);
+    private void renderSettingMenuItems(Menu setting) {
+        final RadioMenuItem linear = (RadioMenuItem) setting.getItems().get(0);
+        final RadioMenuItem exp = (RadioMenuItem) setting.getItems().get(1);
+        final RadioMenuItem timer = (RadioMenuItem) setting.getItems().get(2);
+        final RadioMenuItem pred = (RadioMenuItem) setting.getItems().get(3);
         
-        linear.selectedProperty().set(player.getShowLinear());
-        exp.selectedProperty().set(player.getShowExp());
-        timer.selectedProperty().set(player.getShowTimer());
+        linear.selectedProperty().set(settings.getShowLinear());
+        exp.selectedProperty().set(settings.getShowExp());
+        timer.selectedProperty().set(settings.getShowTimer());
+        pred.selectedProperty().set(settings.getUseCostumPrediction());
 
         linear.setOnAction(e -> {
-            player.setShowLinear(!player.getShowLinear());
+            settings.setShowLinear(!settings.getShowLinear());
         });
 
         exp.setOnAction(e -> {
-            player.setShowExp(!player.getShowExp());
+            settings.setShowExp(!settings.getShowExp());
         });
 
         timer.setOnAction(e -> {
-            player.setShowTimer(!player.getShowTimer());
+            settings.setShowTimer(!settings.getShowTimer());
+        });
+
+        pred.setOnAction(e -> {
+            settings.setUseCostumPrediction(!settings.getUseCostumPrediction());
         });
     }
     
@@ -436,15 +445,15 @@ public class IngameController implements Controller {
     }
 
     private void handleGoogleUsername() {
-        TextInputDialog inputDialog = new TextInputDialog(player.getAPIUsername());
+        TextInputDialog inputDialog = new TextInputDialog(settings.getAPIUsername());
         inputDialog.setHeaderText("Enter your Google API Username");
         inputDialog.getEditor().setPromptText("Your username here…");
-        if(player.getAPIUsername() != null) {
-            inputDialog.getEditor().setText(player.getAPIUsername());
+        if(settings.getAPIUsername() != null) {
+            inputDialog.getEditor().setText(settings.getAPIUsername());
         }
 
         Optional<String> result = inputDialog.showAndWait();
-        result.ifPresent(username -> player.setAPIUsername(username));
+        result.ifPresent(username -> settings.setAPIUsername(username));
     }
 
     private void handleGoogleSheets() {

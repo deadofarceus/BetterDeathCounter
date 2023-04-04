@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXSlider?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="301.0" prefWidth="600.0" spacing="5.0" stylesheets="@../style/stylesheet.css" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml">
+   <children>
+      <Text id="bossName" fill="#ffb92c" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="textPrimary" text="Drachenbaumwächter" textAlignment="CENTER">
+         <font>
+            <Font size="36.0" />
+         </font>
+      </Text>
+      <Text id="allBossDeaths" fill="#5bff4c" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="textPrimary" text="Deaths: 0" textAlignment="CENTER">
+         <font>
+            <Font size="25.0" />
+         </font>
+      </Text>
+      <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0">
+         <children>
+            <Text id="predInfoText" strokeType="OUTSIDE" strokeWidth="0.0" text="Next PB: 0&#10;Current Mean: 0" textAlignment="CENTER">
+               <font>
+                  <Font size="21.0" />
+               </font>
+            </Text>
+            <Text id="badTrysText" strokeType="OUTSIDE" strokeWidth="0.0" text="Bad Trys: 0" textAlignment="CENTER">
+               <font>
+                  <Font size="22.0" />
+               </font>
+            </Text>
+            <JFXSlider id="numOfBadTrysSlider" blockIncrement="1.0" maxWidth="-Infinity" prefHeight="48.0" prefWidth="287.0" showTickLabels="true" showTickMarks="true" value="20.0" />
+            <HBox alignment="CENTER" maxWidth="443.0" prefHeight="37.0" prefWidth="443.0">
+               <children>
+                  <Text id="progressTrys" strokeType="OUTSIDE" strokeWidth="0.0" text="Adjust cumulative probability: " textAlignment="CENTER">
+                     <font>
+                        <Font size="20.0" />
+                     </font>
+                  </Text>
+                  <TextField id="adjustCumulativeProbability" prefHeight="25.0" prefWidth="161.0" text="0.5000000000000000000" />
+               </children>
+            </HBox>
+            <JFXSlider id="cumulativeProbabilitySlider" blockIncrement="0.0001" max="0.5" maxWidth="-Infinity" min="0.45" prefHeight="48.0" prefWidth="287.0" showTickLabels="true" showTickMarks="true" value="0.5" />
+         </children>
+      </VBox>
+   </children>
+</VBox>

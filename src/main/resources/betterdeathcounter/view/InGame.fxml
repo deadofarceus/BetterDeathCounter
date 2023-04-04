@@ -17,7 +17,7 @@
          <image>
             <Image url="@../images/background.png" />
          </image></ImageView>
-      <VBox prefHeight="720.0" prefWidth="1280.0">
+      <VBox prefHeight="720.0" prefWidth="1280.0" stylesheets="@../style/stylesheet.css">
          <children>
             <MenuBar id="optionBar" prefWidth="1280.0" VBox.vgrow="NEVER">
                <menus>
@@ -52,11 +52,12 @@
                         <MenuItem id="deleteSpecific" mnemonicParsing="false" text="Delete Specific Death" />
                      </items>
                   </Menu>
-                  <Menu id="graph" mnemonicParsing="false" text="Graph">
+                  <Menu id="settings" mnemonicParsing="false" text="Settings">
                      <items>
                         <RadioMenuItem id="linear" mnemonicParsing="false" text="Toggle linear regression" />
                         <RadioMenuItem id="exp" mnemonicParsing="false" text="Toggle exponential regression" />
                         <RadioMenuItem id="timer" mnemonicParsing="false" text="Toggle timer" />
+                        <RadioMenuItem id="pred" mnemonicParsing="false" text="Toggle dedoische Prediction" />
                      </items>
                   </Menu>
                   <Menu id="connect" mnemonicParsing="false" text="Connect">

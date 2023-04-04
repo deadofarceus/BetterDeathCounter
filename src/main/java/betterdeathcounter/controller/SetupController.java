@@ -8,6 +8,7 @@ import java.util.List;
 import betterdeathcounter.App;
 import betterdeathcounter.Main;
 import betterdeathcounter.model.Player;
+import betterdeathcounter.model.Settings;
 import betterdeathcounter.service.IandOService;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -54,9 +55,11 @@ public class SetupController implements Controller {
 
                     Player player = new Player()
                         .setName(nameInput.getText())
-                        .setShowLinear(true)
-                        .setShowExp(true)
-                        .setShowTimer(true);
+                        .setSettings(new Settings()
+                            .setShowLinear(true)
+                            .setShowExp(true)
+                            .setShowTimer(true)
+                            .setUseCostumPrediction(false));
                     oldPlayers.add(player);
                     IngameController ic = new IngameController(app, oldPlayers, player);
                     ic.init();

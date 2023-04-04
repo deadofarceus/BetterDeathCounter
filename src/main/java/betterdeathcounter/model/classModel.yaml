@@ -1,5 +1,5 @@
 - c: 	org.fulib.classmodel.ClassModel
-  classes: 	death 	boss 	game 	player
+  classes: 	death 	boss 	game 	player 	settings
   defaultCollectionType: 	c1
   defaultPropertyStyle: 	Bean
   defaultRoleType: 	"java.util.ArrayList<%s>"
@@ -16,7 +16,7 @@
   roles: 	death_Boss_deaths
 
 - boss: 	org.fulib.classmodel.Clazz
-  attributes: 	boss_name 	boss_secondPhase
+  attributes: 	boss_name 	boss_secondPhase 	boss_prediction
   model: 	c
   modified: 	false
   name: 	Boss
@@ -29,15 +29,23 @@
   modified: 	false
   name: 	Game
   propertyStyle: 	Bean
-  roles: 	game_bosses 	game_Player_currentGame 	game_player
+  roles: 	game_bosses 	game_player 	game_Player_currentGame
 
 - player: 	org.fulib.classmodel.Clazz
-  attributes: 	player_name 	player_APIUsername 	player_garbageFactor 	player_showLinear 	player_showExp 	player_showTimer
+  attributes: 	player_name
   model: 	c
   modified: 	false
   name: 	Player
   propertyStyle: 	Bean
-  roles: 	player_currentGame 	player_currentBoss 	player_games
+  roles: 	player_games 	player_settings 	player_currentGame 	player_currentBoss
+
+- settings: 	org.fulib.classmodel.Clazz
+  attributes: 	settings_APIUsername 	settings_garbageFactor 	settings_cumulativeProbabilityScaling 	settings_numBadTrys 	settings_showLinear 	settings_showExp 	settings_showTimer 	settings_useCostumPrediction
+  model: 	c
+  modified: 	false
+  name: 	Settings
+  propertyStyle: 	Bean
+  roles: 	settings_Player_settings
 
 - c1: 	org.fulib.classmodel.CollectionType
   implClass: 	class java.util.ArrayList
@@ -92,6 +100,15 @@
   propertyStyle: 	Bean
   type: 	Boolean
   typeSignature: 	Boolean
+
+- boss_prediction: 	org.fulib.classmodel.Attribute
+  clazz: 	boss
+  id: 	Boss_prediction
+  modified: 	false
+  name: 	prediction
+  propertyStyle: 	Bean
+  type: 	"double[]"
+  typeSignature: 	"double[]"
 
 - boss_game: 	org.fulib.classmodel.AssocRole
   aggregation: 	false
@@ -156,6 +173,16 @@
   propertyStyle: 	Bean
   roleType: 	"java.util.ArrayList<%s>"
 
+- game_player: 	org.fulib.classmodel.AssocRole
+  aggregation: 	false
+  cardinality: 	1
+  clazz: 	game
+  id: 	Game_player
+  modified: 	false
+  name: 	player
+  other: 	player_games
+  propertyStyle: 	Bean
+
 - game_Player_currentGame: 	org.fulib.classmodel.AssocRole
   aggregation: 	false
   cardinality: 	0
@@ -167,16 +194,6 @@
   propertyStyle: 	Bean
   roleType: 	"java.util.ArrayList<%s>"
 
-- game_player: 	org.fulib.classmodel.AssocRole
-  aggregation: 	false
-  cardinality: 	1
-  clazz: 	game
-  id: 	Game_player
-  modified: 	false
-  name: 	player
-  other: 	player_games
-  propertyStyle: 	Bean
-
 - player_name: 	org.fulib.classmodel.Attribute
   clazz: 	player
   id: 	Player_name
@@ -186,50 +203,27 @@
   type: 	String
   typeSignature: 	String
 
-- player_APIUsername: 	org.fulib.classmodel.Attribute
+- player_games: 	org.fulib.classmodel.AssocRole
+  aggregation: 	false
+  cardinality: 	42
   clazz: 	player
-  id: 	Player_APIUsername
+  collectionType: 	c1
+  id: 	Player_games
   modified: 	false
-  name: 	APIUsername
+  name: 	games
+  other: 	game_player
   propertyStyle: 	Bean
-  type: 	String
-  typeSignature: 	String
+  roleType: 	"java.util.ArrayList<%s>"
 
-- player_garbageFactor: 	org.fulib.classmodel.Attribute
+- player_settings: 	org.fulib.classmodel.AssocRole
+  aggregation: 	false
+  cardinality: 	1
   clazz: 	player
-  id: 	Player_garbageFactor
+  id: 	Player_settings
   modified: 	false
-  name: 	garbageFactor
+  name: 	settings
+  other: 	settings_Player_settings
   propertyStyle: 	Bean
-  type: 	double
-  typeSignature: 	double
-
-- player_showLinear: 	org.fulib.classmodel.Attribute
-  clazz: 	player
-  id: 	Player_showLinear
-  modified: 	false
-  name: 	showLinear
-  propertyStyle: 	Bean
-  type: 	Boolean
-  typeSignature: 	Boolean
-
-- player_showExp: 	org.fulib.classmodel.Attribute
-  clazz: 	player
-  id: 	Player_showExp
-  modified: 	false
-  name: 	showExp
-  propertyStyle: 	Bean
-  type: 	Boolean
-  typeSignature: 	Boolean
-
-- player_showTimer: 	org.fulib.classmodel.Attribute
-  clazz: 	player
-  id: 	Player_showTimer
-  modified: 	false
-  name: 	showTimer
-  propertyStyle: 	Bean
-  type: 	Boolean
-  typeSignature: 	Boolean
 
 - player_currentGame: 	org.fulib.classmodel.AssocRole
   aggregation: 	false
@@ -251,15 +245,86 @@
   other: 	boss_Player_currentBoss
   propertyStyle: 	Bean
 
-- player_games: 	org.fulib.classmodel.AssocRole
-  aggregation: 	false
-  cardinality: 	42
-  clazz: 	player
-  collectionType: 	c1
-  id: 	Player_games
+- settings_APIUsername: 	org.fulib.classmodel.Attribute
+  clazz: 	settings
+  id: 	Settings_APIUsername
   modified: 	false
-  name: 	games
-  other: 	game_player
+  name: 	APIUsername
+  propertyStyle: 	Bean
+  type: 	String
+  typeSignature: 	String
+
+- settings_garbageFactor: 	org.fulib.classmodel.Attribute
+  clazz: 	settings
+  id: 	Settings_garbageFactor
+  modified: 	false
+  name: 	garbageFactor
+  propertyStyle: 	Bean
+  type: 	double
+  typeSignature: 	double
+
+- settings_cumulativeProbabilityScaling: 	org.fulib.classmodel.Attribute
+  clazz: 	settings
+  id: 	Settings_cumulativeProbabilityScaling
+  modified: 	false
+  name: 	cumulativeProbabilityScaling
+  propertyStyle: 	Bean
+  type: 	double
+  typeSignature: 	double
+
+- settings_numBadTrys: 	org.fulib.classmodel.Attribute
+  clazz: 	settings
+  id: 	Settings_numBadTrys
+  modified: 	false
+  name: 	numBadTrys
+  propertyStyle: 	Bean
+  type: 	int
+  typeSignature: 	int
+
+- settings_showLinear: 	org.fulib.classmodel.Attribute
+  clazz: 	settings
+  id: 	Settings_showLinear
+  modified: 	false
+  name: 	showLinear
+  propertyStyle: 	Bean
+  type: 	Boolean
+  typeSignature: 	Boolean
+
+- settings_showExp: 	org.fulib.classmodel.Attribute
+  clazz: 	settings
+  id: 	Settings_showExp
+  modified: 	false
+  name: 	showExp
+  propertyStyle: 	Bean
+  type: 	Boolean
+  typeSignature: 	Boolean
+
+- settings_showTimer: 	org.fulib.classmodel.Attribute
+  clazz: 	settings
+  id: 	Settings_showTimer
+  modified: 	false
+  name: 	showTimer
+  propertyStyle: 	Bean
+  type: 	Boolean
+  typeSignature: 	Boolean
+
+- settings_useCostumPrediction: 	org.fulib.classmodel.Attribute
+  clazz: 	settings
+  id: 	Settings_useCostumPrediction
+  modified: 	false
+  name: 	useCostumPrediction
+  propertyStyle: 	Bean
+  type: 	Boolean
+  typeSignature: 	Boolean
+
+- settings_Player_settings: 	org.fulib.classmodel.AssocRole
+  aggregation: 	false
+  cardinality: 	0
+  clazz: 	settings
+  collectionType: 	c1
+  id: 	Settings_Player_settings
+  modified: 	false
+  other: 	player_settings
   propertyStyle: 	Bean
   roleType: 	"java.util.ArrayList<%s>"
 

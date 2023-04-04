@@ -8,6 +8,7 @@ import betterdeathcounter.model.Boss;
 import betterdeathcounter.model.Death;
 import betterdeathcounter.model.Game;
 import betterdeathcounter.model.Player;
+import betterdeathcounter.model.Settings;
 
 public class CalculateService {
 
@@ -20,7 +21,9 @@ public class CalculateService {
     }
 
     public double[] getRegressionInfos(Player player) {
+        Settings settings = player.getSettings();
         Boss boss = player.getCurrentBoss();
+
         if (boss.getName().equals("Other Monsters or Heights") 
             || boss.getName().equals("Please create a new game")) {
 
@@ -30,8 +33,8 @@ public class CalculateService {
             return new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
         }
     
-        double[] linear = getLinearRegression(boss.getDeaths(), player.getGarbageFactor());
-        double[] exp = getExpRegression(boss.getDeaths(), player.getGarbageFactor(), linear);
+        double[] linear = getLinearRegression(boss.getDeaths(), settings.getGarbageFactor());
+        double[] exp = getExpRegression(boss.getDeaths(), settings.getGarbageFactor(), linear);
         int expLastTry = predictLastTryExp(exp);
         int linearLastTry = predictLastTry(linear);
     
