@@ -105,11 +105,9 @@ public class IandOService {
                 boolean sp = false;
                 if(row.getCell(i) == null) i = 0;
                 for(i = 3; row.getCell(i) != null && row.getCell(i).getNumericCellValue() > 0;i++) {
-                    // System.out.println(row.getCell(i).getNumericCellValue());
                     if((int)row.getCell(i).getNumericCellValue() > 100) sp = true;
                     alleTode.add(new Death().setPercentage((int)row.getCell(i).getNumericCellValue()));
                 }
-                // System.out.println(bossName + " " + numOfDeaths + " Number ProzentToden " + i);
                 for(int j = i; j < numOfDeaths + 3; j++) {
                     alleTode.add(new Death());
                 }

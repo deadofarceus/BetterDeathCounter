@@ -152,7 +152,6 @@ public class BossCostumPredController implements Controller {
          */
         deathListener = e -> {
             int numOfDeaths = boss.getDeaths().size();
-            System.out.println("ETTESTETSTEST");
             allBossDeaths.setText("Deaths: " + numOfDeaths);
 
             double[] pred = myPredictionService.getMYPredictions(boss, settings);

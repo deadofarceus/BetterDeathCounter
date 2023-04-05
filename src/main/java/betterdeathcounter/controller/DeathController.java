@@ -13,6 +13,7 @@ import betterdeathcounter.model.Player;
 import betterdeathcounter.model.Settings;
 import betterdeathcounter.service.APIService;
 import betterdeathcounter.service.CalculateService;
+import betterdeathcounter.service.TimeService;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -140,9 +141,9 @@ public class DeathController implements Controller {
                             if (player.getCurrentGame().getSpreadsheetId() != null && settings.getAPIUsername() != null) {
                                 apiService.sendData(player.getCurrentGame(), boss);
                             } else {
-                                System.out.println("No connection to google service!");
-                                System.out.println("Please enter API Username for the player and ");
-                                System.out.println("the spreadsheetId for the game under the Connect menu!");
+                                TimeService.print("No connection to google service!");
+                                TimeService.print("Please enter API Username for the player and ");
+                                TimeService.print("the spreadsheetId for the game under the Connect menu!");
                                 System.out.println();
                             }
                         } catch (GeneralSecurityException | IOException e1) {
@@ -150,7 +151,7 @@ public class DeathController implements Controller {
                         }
                     }).start();
                     
-                    System.out.println("New Death: " + d.getPercentage());
+                    TimeService.print("New Death: " + d.getPercentage());
                 }
             }
             

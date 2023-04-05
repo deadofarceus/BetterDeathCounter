@@ -62,7 +62,6 @@ public class SetupController implements Controller {
                             .setUseCostumPrediction(false));
                     oldPlayers.add(player);
                     IngameController ic = new IngameController(app, oldPlayers, player);
-                    ic.init();
                     app.show(ic);
                 } else {
                     Alert exitDialog = new Alert(Alert.AlertType.CONFIRMATION);

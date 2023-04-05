@@ -4,9 +4,11 @@ import java.awt.Toolkit;
 import java.util.List;
 
 import betterdeathcounter.App;
+import betterdeathcounter.Main;
 import betterdeathcounter.model.Boss;
 import betterdeathcounter.model.Death;
 import betterdeathcounter.model.Player;
+import betterdeathcounter.service.TimeService;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -48,7 +50,6 @@ public class SpecificDeathScene {
         deathsPane.setStyle("-fx-background-color: #1f85de;");
         deathsPane.setPadding(new Insets(10));
 
-        int i = 0;
         for (int j = 0; j < deaths.size(); j+=5) {
             HBox deathrow = new HBox();
             deathrow = new HBox();
@@ -58,21 +59,18 @@ public class SpecificDeathScene {
                     break;
                 }
                 Death death = deaths.get(j+k);
-                Label deathLabel = new Label("No. " + i+1 + ": " + death.getPercentage() + "%");
+                Label deathLabel = new Label("No. " + (j+k) + ": " + death.getPercentage() + "%");
                 deathLabel.setPadding(new Insets(5));
-                deathLabel.setStyle("-fx-font-size: 18px; -fx-background-color: #0b2fb0; -fx-border-color: #de781f; -fx-border-width: 2px;");
-                deathLabel.setTextFill(Color.web("#f2f2f2"));
-                deathLabel.setPrefSize(150, 50);
+                deathLabel.getStyleClass().add("death-label");
                 deathLabel.setAlignment(Pos.CENTER);
                 deathLabel.setOnMouseClicked(event -> {
                     currentBoss.withoutDeaths(death);
                     deathsPane.getScene().getWindow().hide();
-                    System.out.println("Death deleted: " + death.getPercentage());
+                    TimeService.print("Death deleted: " + death.getPercentage());
                 });
                 deathrow.getChildren().add(deathLabel);
             }
             deathsPane.getChildren().add(deathrow);
-            i++;
         }
         
         ScrollPane scrollPane = new ScrollPane(deathsPane);
@@ -81,6 +79,7 @@ public class SpecificDeathScene {
         
         Scene scene = new Scene(scrollPane);
         scene.setFill(Color.web("#1f85de"));
+        scene.getStylesheets().add(Main.class.getResource("style/AboutStyle.css").toString());
 
         Stage stage = new Stage();
         stage.setTitle("Delete Death");

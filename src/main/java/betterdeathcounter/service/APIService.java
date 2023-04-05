@@ -45,7 +45,7 @@ public class APIService {
         Sheets sheetsService = getSheetService();
 
         if (sheetsService == null) {
-            System.out.println("No Data sent!");
+            TimeService.print("No Data sent!");
             System.out.println();
             return;
         }
@@ -65,18 +65,18 @@ public class APIService {
                     .setValueInputOption("RAW")
                     .execute();
 
-        System.out.println(response.getUpdatedCells() + " cells succesfull updated");
+        TimeService.print(response.getUpdatedCells() + " cells succesfull updated");
         System.out.println();
     }
     
     private Credential authorize() throws IOException, GeneralSecurityException {
         InputStream in = new FileInputStream(CREDENTIALS_FILE_PATH);;
         if (in.available() == 0) {
-            System.out.println("Resource not found: " + CREDENTIALS_FILE_PATH);
-            System.out.println("Please add your google Cresentials here: " +
+            TimeService.print("Resource not found: " + CREDENTIALS_FILE_PATH);
+            TimeService.print("Please add your google Cresentials here: " +
                 "resources/credentials.json");
-            System.out.println("If you dont now how look here: ");
-            System.out.println("https://developers.google.com/sheets/api/quickstart/java");
+            TimeService.print("If you dont now how look here: ");
+            TimeService.print("https://developers.google.com/sheets/api/quickstart/java");
             in.close();
             return null;
         }

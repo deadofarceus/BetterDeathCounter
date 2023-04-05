@@ -17,6 +17,7 @@ import betterdeathcounter.model.Game;
 import betterdeathcounter.model.Player;
 import betterdeathcounter.model.Settings;
 import betterdeathcounter.service.IandOService;
+import betterdeathcounter.service.TimeService;
 import betterdeathcounter.subscenes.AboutScene;
 import betterdeathcounter.subscenes.BossStatsScene;
 import betterdeathcounter.subscenes.SpecificDeathScene;
@@ -59,12 +60,11 @@ public class IngameController implements Controller {
         initializePlayerData();
         initializeBossData();
 
-        ScheduledExecutorService saveScheduler = Executors.newSingleThreadScheduledExecutor();
         saveScheduler.scheduleAtFixedRate(() -> {
             for (Player oldPlayer : oldPlayers) {
                 iandOService.savePlayer(oldPlayer);
             }
-            System.out.println("Saved all Players");
+            TimeService.print("Saved all Players");
         }, 60, 60, TimeUnit.SECONDS);
     }
 
@@ -74,7 +74,7 @@ public class IngameController implements Controller {
 
         //make the stage clickable so the | thing gets out of the textfield
         app.getStage().getScene().setOnMouseClicked(event ->{});
-        
+
         /*
          * Menu Actions
          */
@@ -159,7 +159,7 @@ public class IngameController implements Controller {
         save.setOnAction(e -> {
             iandOService.savePlayer(player);
 
-            System.out.println("Saved Player");
+            TimeService.print("Saved Player");
         });
 
         saveAs.setOnAction(e -> handleSaveAs());
@@ -178,7 +178,7 @@ public class IngameController implements Controller {
         exitDialog.showAndWait();
     
         if (exitDialog.getResult() == ButtonType.OK) {
-            System.out.println("Changed player to: " + oldplayer.getName());
+            TimeService.print("Changed player to: " + oldplayer.getName());
             iandOService.savePlayer(player);
             IngameController ic = new IngameController(app, oldPlayers, oldplayer);
             ic.init();
@@ -200,7 +200,7 @@ public class IngameController implements Controller {
             player.setCurrentGame(g);
         }
     
-        System.out.println("Opened Game from Excel: ");
+        TimeService.print("Opened Game from Excel: ");
     }
     
     private void handleSaveAs() {
@@ -213,7 +213,7 @@ public class IngameController implements Controller {
             File savedGame = fileChooser.showSaveDialog(app.getStage());
      
             if (savedGame != null) {
-                System.out.println("Saved Game as Excel under: " + savedGame.getPath());
+                TimeService.print("Saved Game as Excel under: " + savedGame.getPath());
                 iandOService.saveGame(player.getCurrentGame(), savedGame.getPath());
             }
         } else {
@@ -311,7 +311,7 @@ public class IngameController implements Controller {
         
             app.getStage().setTitle(getTitle());
         
-            System.out.println("New game created: " + g.getName());
+            TimeService.print("New game created: " + g.getName());
     }
 
     private void handleNewBoss(Menu changeBoss) {
@@ -343,7 +343,7 @@ public class IngameController implements Controller {
                     mi.setOnAction(e -> handleChangeBoss(b));
                     changeBoss.getItems().add(mi);
     
-                    System.out.println("New boss created: " + b.getName());
+                    TimeService.print("New boss created: " + b.getName());
                 }
     
             }
@@ -377,7 +377,7 @@ public class IngameController implements Controller {
     
             app.getStage().setTitle(getTitle());
     
-            System.out.println("Game switched to: " + otherGame.getName());
+            TimeService.print("Game switched to: " + otherGame.getName());
         }
     }
 
@@ -389,7 +389,7 @@ public class IngameController implements Controller {
     
         if (exitDialog.getResult() == ButtonType.OK) {
             player.setCurrentBoss(otherBoss);
-            System.out.println("Boss switched to: " + otherBoss.getName());
+            TimeService.print("Boss switched to: " + otherBoss.getName());
         }
     }
 
@@ -398,7 +398,7 @@ public class IngameController implements Controller {
             Death lastDeath = player.getCurrentBoss().getDeaths().get(player.getCurrentBoss().getDeaths().size() - 1);
             player.getCurrentBoss().withoutDeaths(lastDeath);
     
-            System.out.println("Last Death deleted: " + lastDeath.getPercentage());
+            TimeService.print("Last Death deleted: " + lastDeath.getPercentage());
         } else {
             Alert exitDialog = new Alert(Alert.AlertType.ERROR);
             exitDialog.setTitle("No Deaths for this Boss");
@@ -474,10 +474,12 @@ public class IngameController implements Controller {
         final MenuItem bossStatsMenuItem = about.getItems().get(1);
 
         final AboutScene aboutScene = new AboutScene(app);
-        final BossStatsScene bossStatsScene = new BossStatsScene(app);
 
         aboutMenuItem.setOnAction(e -> aboutScene.showAbout());
-        bossStatsMenuItem.setOnAction(e -> bossStatsScene.showBossStats(player));
+        bossStatsMenuItem.setOnAction(e -> {
+            final BossStatsScene bossStatsScene = new BossStatsScene(app, player);
+            bossStatsScene.showBossStats();
+        } );
     }
 
     private void renderIngameScreen(AnchorPane anchor) throws IOException {

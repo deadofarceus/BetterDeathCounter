@@ -55,7 +55,6 @@ public class PlayerController implements Controller {
 
         loadButton.setOnAction(e -> {
             IngameController ic = new IngameController(app, oldPlayers, player);
-            ic.init();
             app.show(ic);
         });
 

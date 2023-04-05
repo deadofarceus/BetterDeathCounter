@@ -8,6 +8,8 @@ import org.apache.commons.math3.distribution.NormalDistribution;
 import org.apache.commons.math3.stat.descriptive.moment.Mean;
 import org.apache.commons.math3.stat.descriptive.moment.StandardDeviation;
 
+import betterdeathcounter.service.TimeService;
+
 public class PredictTest {
     public static void main(String[] args) throws Exception {
         double[] data = {100, 100, 99, 100, 100, 100, 100, 99, 99, 100, 
@@ -52,8 +54,8 @@ public class PredictTest {
         double[] weights = getWeights(data, 999);
         double mean = new Mean().evaluate(data);
         double standardDeviation = new StandardDeviation().evaluate(data);
-        System.out.println("Mean: " + mean);
-        System.out.println("Standard deviation: " + standardDeviation);
+        TimeService.print("Mean: " + mean);
+        TimeService.print("Standard deviation: " + standardDeviation);
 
         double weightedAvg = new Mean().evaluate(data, weights);
 
