@@ -125,9 +125,8 @@ public class BossStatsScene {
             } else {
                 Death nearest = null;
                 for (Death d : deaths) {
-                    double diff = Math.abs(d.getPercentage() - percentage);
-                    if(diff < 5 && (nearest == null || diff < Math.abs(nearest.getPercentage()-percentage))
-                        && d.getTime() != 0) {
+                    double diff = Math.abs(100-d.getPercentage() - percentage);
+                    if(isBetterMatch(diff, nearest, d, percentage)) {
                         nearest = d;
                     }
                 }
@@ -143,19 +142,18 @@ public class BossStatsScene {
 
     private double getTimePerPercentage(List<Death> deaths) {
         double timePerPercentage = 0.0;
-    
+        
         int numUsedDeaths = 0;
         for (Death death : deaths) {
             int percentage = 100 - death.getPercentage();
-            if (death.getTime() != 0) {
+            if (death.getTime() != 0 && percentage > 2) {
                 timePerPercentage += (double) death.getTime() / percentage;
                 numUsedDeaths++;
-            } else {
+            } else if(percentage > 2) {
                 Death nearest = null;
                 for (Death d : deaths) {
-                    double diff = Math.abs(d.getPercentage() - percentage);
-                    if(diff < 5 && (nearest == null || diff < Math.abs(nearest.getPercentage()-percentage))
-                        && d.getTime() != 0) {
+                    double diff = Math.abs(100-d.getPercentage() - percentage);
+                    if(isBetterMatch(diff, nearest, d, percentage)) {
                         nearest = d;
                     }
                 }
@@ -167,6 +165,14 @@ public class BossStatsScene {
         }
     
         return timePerPercentage / numUsedDeaths;
+    }
+
+    private boolean isBetterMatch(double diff, Death nearest, Death death, double percentage) {
+        boolean isNewNearest = nearest == null || diff < Math.abs(100 - nearest.getPercentage() - percentage);
+        boolean isNotZeroTime = death.getTime() != 0;
+        boolean isBetter = diff < 5 && isNewNearest && isNotZeroTime;
+        
+        return isBetter;
     }
     
     private String timeTillDefeated(List<Death> deaths, double[] regressionInfos) {
