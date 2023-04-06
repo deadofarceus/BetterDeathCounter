@@ -181,7 +181,6 @@ public class IngameController implements Controller {
             TimeService.print("Changed player to: " + oldplayer.getName());
             iandOService.savePlayer(player);
             IngameController ic = new IngameController(app, oldPlayers, oldplayer);
-            ic.init();
             app.show(ic);
         }
     }
@@ -474,12 +473,10 @@ public class IngameController implements Controller {
         final MenuItem bossStatsMenuItem = about.getItems().get(1);
 
         final AboutScene aboutScene = new AboutScene(app);
+        final BossStatsScene bossStatsScene = new BossStatsScene(app, player);
 
         aboutMenuItem.setOnAction(e -> aboutScene.showAbout());
-        bossStatsMenuItem.setOnAction(e -> {
-            final BossStatsScene bossStatsScene = new BossStatsScene(app, player);
-            bossStatsScene.showBossStats();
-        } );
+        bossStatsMenuItem.setOnAction(e ->bossStatsScene.showBossStats() );
     }
 
     private void renderIngameScreen(AnchorPane anchor) throws IOException {

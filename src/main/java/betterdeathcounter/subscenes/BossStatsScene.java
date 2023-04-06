@@ -25,11 +25,17 @@ public class BossStatsScene {
     private final double timePerPercentage;
     private final int totalTime;
     private final Player player;
+    private final List<Death> deaths;
+    private final int maxHealth;
+    private final Boss boss;
 
     public BossStatsScene(App app, Player player) {
         this.app = app;
         this.player = player;
-        List<Death> deaths = player.getCurrentBoss().getDeaths();
+        this.boss = player.getCurrentBoss();
+        this.deaths = boss.getDeaths();
+        if (boss.getSecondPhase()) { this.maxHealth = 200; } 
+        else { this.maxHealth = 100; }
         this.timePerPercentage = getTimePerPercentage(deaths);
         this.totalTime = getTotalSeconds(deaths);
     }
@@ -40,8 +46,6 @@ public class BossStatsScene {
             Toolkit.getDefaultToolkit().beep();
         });
 
-        Boss boss = player.getCurrentBoss();
-        List<Death> deaths = boss.getDeaths();
         double[] regressionInfos = calculateService.getRegressionInfos(player);
         double[] pred = boss.getPrediction();
 
@@ -59,8 +63,8 @@ public class BossStatsScene {
             "Number of deaths: \n" + deaths.size(),
             "Expected last try: \n" + lastTry,
             "Total spend time: \n" + totalTime(),
-            "Time per percentage: \n" + timePerPercentage(boss.getDeaths()),
-            "Time from 100 to 0: \n" + timefrom100to0(boss.getDeaths()),
+            "Time per percentage: \n" + timePerPercentage(),
+            "Time from maxHealth to 0: \n" + timefrommaxHealthto0(),
             "Time till defeated: \n" + tillDefeated
             );
     
@@ -119,13 +123,13 @@ public class BossStatsScene {
         int totalSeconds = 0;
         
         for (Death death : deaths) {
-            int percentage = 100 - death.getPercentage();
+            int percentage = maxHealth - death.getPercentage();
             if (death.getTime() != 0) {
                 totalSeconds += death.getTime();
             } else {
                 Death nearest = null;
                 for (Death d : deaths) {
-                    double diff = Math.abs(100-d.getPercentage() - percentage);
+                    double diff = Math.abs(maxHealth-d.getPercentage() - percentage);
                     if(isBetterMatch(diff, nearest, d, percentage)) {
                         nearest = d;
                     }
@@ -145,14 +149,14 @@ public class BossStatsScene {
         
         int numUsedDeaths = 0;
         for (Death death : deaths) {
-            int percentage = 100 - death.getPercentage();
+            int percentage = maxHealth - death.getPercentage();
             if (death.getTime() != 0 && percentage > 2) {
                 timePerPercentage += (double) death.getTime() / percentage;
                 numUsedDeaths++;
             } else if(percentage > 2) {
                 Death nearest = null;
                 for (Death d : deaths) {
-                    double diff = Math.abs(100-d.getPercentage() - percentage);
+                    double diff = Math.abs(maxHealth-d.getPercentage() - percentage);
                     if(isBetterMatch(diff, nearest, d, percentage)) {
                         nearest = d;
                     }
@@ -168,7 +172,7 @@ public class BossStatsScene {
     }
 
     private boolean isBetterMatch(double diff, Death nearest, Death death, double percentage) {
-        boolean isNewNearest = nearest == null || diff < Math.abs(100 - nearest.getPercentage() - percentage);
+        boolean isNewNearest = nearest == null || diff < Math.abs(maxHealth - nearest.getPercentage() - percentage);
         boolean isNotZeroTime = death.getTime() != 0;
         boolean isBetter = diff < 5 && isNewNearest && isNotZeroTime;
         
@@ -182,7 +186,7 @@ public class BossStatsScene {
         final double expY = regressionInfos[4];
     
         for (int i = deaths.size(); i < regressionInfos[5]; i++) {
-            totalSeconds += (int) ((100-(expY - Math.exp(expSlope * i))) * timePerPercentage);
+            totalSeconds += (int) ((maxHealth-(expY - Math.exp(expSlope * i))) * timePerPercentage);
         }
     
         return formatSeconds(totalSeconds, true);
@@ -192,17 +196,17 @@ public class BossStatsScene {
         int totalSeconds = totalTime;
 
         for (double d : pred) {
-            totalSeconds += (100 - d)*timePerPercentage;
+            totalSeconds += (maxHealth - d)*timePerPercentage;
         }
         
         return formatSeconds(totalSeconds, true);
     }
     
-    private String timefrom100to0(List<Death> deaths) {
-        return formatSeconds((int) (timePerPercentage * 100), true);
+    private String timefrommaxHealthto0() {
+        return formatSeconds((int) (timePerPercentage * maxHealth), true);
     }
     
-    private String timePerPercentage(List<Death> deaths) {
+    private String timePerPercentage() {
         double timePerPercentage = getTimePerPercentage(deaths);
     
         int tpp = (int) (timePerPercentage * 1000);
