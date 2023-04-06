@@ -58,6 +58,7 @@
                         <RadioMenuItem id="exp" mnemonicParsing="false" text="Toggle exponential regression" />
                         <RadioMenuItem id="timer" mnemonicParsing="false" text="Toggle timer" />
                         <RadioMenuItem id="pred" mnemonicParsing="false" text="Toggle dedoische Prediction" />
+                        <RadioMenuItem id="auto" mnemonicParsing="false" text="Toggle automatic detection" />
                      </items>
                   </Menu>
                   <Menu id="connect" mnemonicParsing="false" text="Connect">

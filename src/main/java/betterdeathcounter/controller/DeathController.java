@@ -3,6 +3,9 @@ package betterdeathcounter.controller;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import com.jfoenix.controls.JFXSlider;
 
@@ -12,19 +15,24 @@ import betterdeathcounter.model.Death;
 import betterdeathcounter.model.Player;
 import betterdeathcounter.model.Settings;
 import betterdeathcounter.service.APIService;
+import betterdeathcounter.service.AutomationService;
 import betterdeathcounter.service.CalculateService;
 import betterdeathcounter.service.TimeService;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
+import javafx.scene.layout.HBox;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 
 public class DeathController implements Controller {
 
     private final Player player;
     private final Settings settings;
     private final Boss boss;
+    private final AutomationService automationService = new AutomationService();
     private final CalculateService calculateService = new CalculateService();
     private final APIService apiService = new APIService();
     private long startTime = System.currentTimeMillis();
@@ -34,6 +42,7 @@ public class DeathController implements Controller {
     private long elapsedMinutes = elapsedSeconds / 60;
     private Thread timerThread;
     private boolean shutdown = false;
+    private final ScheduledExecutorService saveScheduler = Executors.newSingleThreadScheduledExecutor();
 
     public DeathController(Boss boss, Player player) {
         this.boss = boss;
@@ -53,7 +62,15 @@ public class DeathController implements Controller {
     @Override
     public Parent render() throws IOException {
         final Parent parent = FXMLLoader.load(Main.class.getResource("view/Death.fxml"));
-        
+        final HBox timerBox = (HBox) parent.lookup("#timerBox");
+        final Text autoPercentage = new Text();
+
+        if (settings.getAutomatic()) {
+            autoPercentage.setFont(new Font(20));
+            autoPercentage.setText("Detected Percentage:\n100%");
+            autoPercentage.setTextAlignment(TextAlignment.CENTER);
+            timerBox.getChildren().add(autoPercentage);
+        }
         /*
          * Timer display
          */
@@ -87,13 +104,47 @@ public class DeathController implements Controller {
         final Button secondPhase = (Button) parent.lookup("#secondPhase");
         final JFXSlider percentageSlider = (JFXSlider) parent.lookup("#percentageSlider");
 
+        if (settings.getAutomatic()) {
+            saveScheduler.scheduleAtFixedRate(() -> {
+                int result = automationService.checkState();
+                if (result > -1 && result < 1000) {
+                    Platform.runLater(() -> handleNewDeath(percentageSlider, totalTime, result));
+                } else if (result < -1) {
+                    startTime = System.currentTimeMillis();
+                } else if (result > 1000) {
+                    Platform.runLater(() -> autoPercentage.setText("Detected Percentage:\n" + (result-1000) + "%"));
+                }
+            }, 1, 1, TimeUnit.SECONDS);
+        }
+
         secondPhase.setVisible(false);
         if (boss.getSecondPhase()) {
             percentageSlider.setMax(200);
         }
 
-        newDeath.setOnAction(e -> {
+        newDeath.setOnAction(e -> handleNewDeath(percentageSlider, totalTime, -1));
+    
+        secondPhase.setOnAction(e -> {
+            boss.setSecondPhase(true);
 
+            percentageSlider.setMax(200);
+            for (Death death : boss.getDeaths()) {
+                death.setPercentage(death.getPercentage()+100);
+            }
+
+            secondPhase.setVisible(false);  
+        });
+
+        percentageSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
+            newDeath.setText("NEW DEATH: " + newValue.intValue() + "%");
+            secondPhase.setVisible(newValue.intValue() == 0 && !boss.getSecondPhase());
+        });
+
+        return parent;
+    }
+
+    private void handleNewDeath(JFXSlider percentageSlider, Text totalTime, int result) {
+    
             // try {
             //     BufferedWriter writer = new BufferedWriter(new FileWriter("C:/Users/NiKi/Desktop/Coding/deaths.txt"));
             //     StringBuilder sb = new StringBuilder();
@@ -109,6 +160,9 @@ public class DeathController implements Controller {
 
             
             int percentage = percentageSlider.valueProperty().intValue();
+            if (result > 0) {
+                percentage = result;
+            }
             Death d = new Death().setPercentage(percentage);
 
             if(elapsedTime > 30) d.setTime((int)elapsedTime);
@@ -156,25 +210,7 @@ public class DeathController implements Controller {
             }
             
             totalTime.setText(totalTime(player.getCurrentBoss().getDeaths()));
-        });
-    
-        secondPhase.setOnAction(e -> {
-            boss.setSecondPhase(true);
 
-            percentageSlider.setMax(200);
-            for (Death death : boss.getDeaths()) {
-                death.setPercentage(death.getPercentage()+100);
-            }
-
-            secondPhase.setVisible(false);  
-        });
-
-        percentageSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
-            newDeath.setText("NEW DEATH: " + newValue.intValue() + "%");
-            secondPhase.setVisible(newValue.intValue() == 0 && !boss.getSecondPhase());
-        });
-
-        return parent;
     }
 
     private String totalTime(List<Death> deaths) {
@@ -194,6 +230,7 @@ public class DeathController implements Controller {
 
     @Override
     public void destroy() {
+        saveScheduler.shutdown();
         shutdown = true;
     }
     

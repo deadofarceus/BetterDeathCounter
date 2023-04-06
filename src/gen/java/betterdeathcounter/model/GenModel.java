@@ -35,6 +35,7 @@ public class GenModel implements ClassModelDecorator {
         Boolean showExp;
         Boolean showTimer;
         Boolean useCostumPrediction;
+        Boolean automatic;
     }
 
     class Game {

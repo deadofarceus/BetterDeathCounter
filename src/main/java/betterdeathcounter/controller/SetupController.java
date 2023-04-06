@@ -59,7 +59,8 @@ public class SetupController implements Controller {
                             .setShowLinear(true)
                             .setShowExp(true)
                             .setShowTimer(true)
-                            .setUseCostumPrediction(false));
+                            .setUseCostumPrediction(false)
+                            .setAutomatic(false));
                     oldPlayers.add(player);
                     IngameController ic = new IngameController(app, oldPlayers, player);
                     app.show(ic);

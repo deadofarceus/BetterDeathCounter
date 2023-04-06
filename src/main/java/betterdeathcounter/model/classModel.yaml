@@ -40,7 +40,7 @@
   roles: 	player_games 	player_settings 	player_currentGame 	player_currentBoss
 
 - settings: 	org.fulib.classmodel.Clazz
-  attributes: 	settings_APIUsername 	settings_garbageFactor 	settings_cumulativeProbabilityScaling 	settings_numBadTrys 	settings_showLinear 	settings_showExp 	settings_showTimer 	settings_useCostumPrediction
+  attributes: 	settings_APIUsername 	settings_garbageFactor 	settings_cumulativeProbabilityScaling 	settings_numBadTrys 	settings_showLinear 	settings_showExp 	settings_showTimer 	settings_useCostumPrediction 	settings_automatic
   model: 	c
   modified: 	false
   name: 	Settings
@@ -313,6 +313,15 @@
   id: 	Settings_useCostumPrediction
   modified: 	false
   name: 	useCostumPrediction
+  propertyStyle: 	Bean
+  type: 	Boolean
+  typeSignature: 	Boolean
+
+- settings_automatic: 	org.fulib.classmodel.Attribute
+  clazz: 	settings
+  id: 	Settings_automatic
+  modified: 	false
+  name: 	automatic
   propertyStyle: 	Bean
   type: 	Boolean
   typeSignature: 	Boolean

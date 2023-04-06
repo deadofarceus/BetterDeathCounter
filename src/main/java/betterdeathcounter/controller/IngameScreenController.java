@@ -127,6 +127,7 @@ public class IngameScreenController implements Controller {
         settings.listeners().addPropertyChangeListener(Settings.PROPERTY_SHOW_EXP, deathListener);
         settings.listeners().addPropertyChangeListener(Settings.PROPERTY_SHOW_LINEAR, deathListener);
         settings.listeners().addPropertyChangeListener(Settings.PROPERTY_USE_COSTUM_PREDICTION, bossListener);
+        settings.listeners().addPropertyChangeListener(Settings.PROPERTY_AUTOMATIC, timerListener);
 
         return parent;
     }
@@ -146,6 +147,7 @@ public class IngameScreenController implements Controller {
         settings.listeners().removePropertyChangeListener(Settings.PROPERTY_SHOW_EXP, deathListener);
         settings.listeners().removePropertyChangeListener(Settings.PROPERTY_SHOW_LINEAR, deathListener);
         settings.listeners().removePropertyChangeListener(Settings.PROPERTY_USE_COSTUM_PREDICTION, bossListener);
+        settings.listeners().removePropertyChangeListener(Settings.PROPERTY_AUTOMATIC, timerListener);
     }
     
 }

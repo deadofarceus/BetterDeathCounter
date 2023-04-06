@@ -411,27 +411,23 @@ public class IngameController implements Controller {
         final RadioMenuItem exp = (RadioMenuItem) setting.getItems().get(1);
         final RadioMenuItem timer = (RadioMenuItem) setting.getItems().get(2);
         final RadioMenuItem pred = (RadioMenuItem) setting.getItems().get(3);
+        final RadioMenuItem auto = (RadioMenuItem) setting.getItems().get(4);
         
         linear.selectedProperty().set(settings.getShowLinear());
         exp.selectedProperty().set(settings.getShowExp());
         timer.selectedProperty().set(settings.getShowTimer());
         pred.selectedProperty().set(settings.getUseCostumPrediction());
+        auto.selectedProperty().set(settings.getAutomatic());
 
-        linear.setOnAction(e -> {
-            settings.setShowLinear(!settings.getShowLinear());
-        });
+        linear.setOnAction(e -> settings.setShowLinear(!settings.getShowLinear()));
 
-        exp.setOnAction(e -> {
-            settings.setShowExp(!settings.getShowExp());
-        });
+        exp.setOnAction(e -> settings.setShowExp(!settings.getShowExp()));
 
-        timer.setOnAction(e -> {
-            settings.setShowTimer(!settings.getShowTimer());
-        });
+        timer.setOnAction(e -> settings.setShowTimer(!settings.getShowTimer()));
 
-        pred.setOnAction(e -> {
-            settings.setUseCostumPrediction(!settings.getUseCostumPrediction());
-        });
+        pred.setOnAction(e -> settings.setUseCostumPrediction(!settings.getUseCostumPrediction()));
+
+        auto.setOnAction(e -> settings.setAutomatic(!settings.getAutomatic()));
     }
     
     private void renderConnectMenuItems(Menu connect) {

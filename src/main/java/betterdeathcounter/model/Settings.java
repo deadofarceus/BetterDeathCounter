@@ -12,6 +12,7 @@ public class Settings
    public static final String PROPERTY_CUMULATIVE_PROBABILITY_SCALING = "cumulativeProbabilityScaling";
    public static final String PROPERTY_NUM_BAD_TRYS = "numBadTrys";
    public static final String PROPERTY_USE_COSTUM_PREDICTION = "useCostumPrediction";
+   public static final String PROPERTY_AUTOMATIC = "automatic";
    private String APIUsername;
    private double garbageFactor;
    private Boolean showLinear;
@@ -21,6 +22,7 @@ public class Settings
    private double cumulativeProbabilityScaling;
    private int numBadTrys;
    private Boolean useCostumPrediction;
+   private Boolean automatic;
 
    public String getAPIUsername()
    {
@@ -163,6 +165,24 @@ public class Settings
       final Boolean oldValue = this.useCostumPrediction;
       this.useCostumPrediction = value;
       this.firePropertyChange(PROPERTY_USE_COSTUM_PREDICTION, oldValue, value);
+      return this;
+   }
+
+   public Boolean getAutomatic()
+   {
+      return this.automatic;
+   }
+
+   public Settings setAutomatic(Boolean value)
+   {
+      if (Objects.equals(value, this.automatic))
+      {
+         return this;
+      }
+
+      final Boolean oldValue = this.automatic;
+      this.automatic = value;
+      this.firePropertyChange(PROPERTY_AUTOMATIC, oldValue, value);
       return this;
    }
 
