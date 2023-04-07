@@ -16,7 +16,7 @@ repositories {
 
 dependencies {
 
-    // Microsoft Documents API
+    // Apache API
     implementation 'org.apache.poi:poi:5.2.0'
 
     // Microsoft Documents API
@@ -25,12 +25,8 @@ dependencies {
     // cooler javafx stuff
     implementation 'com.jfoenix:jfoenix:9.0.10'
 
-    // Arima model
-    // implementation 'com.github.haifengl:smile-core:3.0.1'
-    // implementation 'com.github.signaflo:timeseries:0.4'
-
-    // Decisiontree
-    // implementation 'nz.ac.waikato.cms.weka:weka-stable:3.8.6'
+    // access Browser
+    implementation 'org.seleniumhq.selenium:selenium-java:4.8.3'
 
     // Google API
     implementation 'com.google.api-client:google-api-client:2.0.0'

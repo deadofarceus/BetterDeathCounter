@@ -42,10 +42,11 @@
                         </Button>
                      </children>
                   </VBox>
-                  <ScrollPane id="savedPlayers" maxHeight="-Infinity" prefHeight="380.0" prefWidth="370.0" style="-fx-background: transparent; -fx-background-color: transparent;" stylesheets="@../style/stylesheet.css">
+                  <ScrollPane id="savedPlayers" maxHeight="-Infinity" prefHeight="420.0" prefWidth="380.0" style="-fx-background: transparent; -fx-background-color: transparent;" stylesheets="@../style/stylesheet.css">
                      <content>
                         <VBox alignment="TOP_CENTER" prefHeight="378.0" prefWidth="325.0" />
-                     </content></ScrollPane>
+                     </content>
+                  </ScrollPane>
                </children>
             </HBox>
          </children>

@@ -16,6 +16,7 @@ public class MYPredictionService {
     
     private final Mean calculateMean = new Mean();
     private final StandardDeviation calculateStandardDeviation = new StandardDeviation();
+    private final CalculateService calculateService = new CalculateService();
 
     private static final int NORMAL_DISTRIBUTION_SCALING = 999;
     private static final int MAX_VALUE = Integer.MAX_VALUE;
@@ -25,7 +26,8 @@ public class MYPredictionService {
         List<Death> deaths = boss.getDeaths();
         if (deaths.size() < 9 || settings.getNumBadTrys() < 1 
             || boss.getName().equals("Other Monsters or Heights") 
-            || boss.getName().equals("Please create a new game")) {
+            || boss.getName().equals("Please create a new game")
+            || calculateService.bossDead(boss)) {
             return new double[]{};
         }
 
@@ -60,7 +62,7 @@ public class MYPredictionService {
             data = Arrays.copyOf(data, data.length + 1);
             data[data.length - 1] = nextValue;
 
-            weights = getWeights(data, 999);
+            weights = getWeights(data, NORMAL_DISTRIBUTION_SCALING);
             mean = calculateMean.evaluate(data);
             weightedAvg = calculateMean.evaluate(data, weights);
             possiblePB = weightedAvg - (mean - weightedAvg);

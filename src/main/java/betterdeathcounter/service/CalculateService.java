@@ -25,12 +25,10 @@ public class CalculateService {
         Boss boss = player.getCurrentBoss();
 
         if (boss.getName().equals("Other Monsters or Heights") 
-            || boss.getName().equals("Please create a new game")) {
+            || boss.getName().equals("Please create a new game")
+            || boss.getDeaths().size() < 10) {
 
             return new double[] {};
-        }
-        if (boss.getDeaths().size() < 10) {
-            return new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
         }
     
         double[] linear = getLinearRegression(boss.getDeaths(), settings.getGarbageFactor());

@@ -14,6 +14,7 @@ import betterdeathcounter.service.MYPredictionService;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.TextField;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 
 public class BossCostumPredController implements Controller {
@@ -40,9 +41,10 @@ public class BossCostumPredController implements Controller {
         double[] pred = myPredictionService.getMYPredictions(boss, settings);
         boss.setPrediction(pred);
         if (pred.length == 0) {
-            return;
+            myPredInfos = new double[]{};
+        } else {
+            myPredInfos = myPredictionService.getPredInfos(boss.getDeaths(), settings, pred[pred.length-1]);
         }
-        myPredInfos = myPredictionService.getPredInfos(boss.getDeaths(), settings, pred[pred.length-1]);
     }
 
     @Override
@@ -65,26 +67,14 @@ public class BossCostumPredController implements Controller {
         adjustCumulativeProbability.setText(""+settings.getCumulativeProbabilityScaling());
         
         if (settings.getNumBadTrys() == 0) {
-            badTrysText.setStyle("-fx-text-fill: red;");
+            badTrysText.setText("Prediction deactivated");
+            badTrysText.setFill(Color.RED);
         } else {
-            badTrysText.setStyle("-fx-text-fill: black;");
+            badTrysText.setText("Bad Trys: " + settings.getNumBadTrys() );
+            badTrysText.setFill(Color.BLACK);
         }
-        badTrysText.setText("Bad Trys: " + settings.getNumBadTrys());
 
-        if (boss.getPrediction().length != 0) {
-            if(calculateService.bossDead(boss)) {
-                predInfoText.setText("You already killed that Boss!");
-            } else {
-                predInfoText.setText(String.format("Next PB: %d\nCurrent Mean: %d", 
-                                                   (int)myPredInfos[0], (int)myPredInfos[1]));  
-            }
-        } else {
-            if (numDeaths < 11) {
-                predInfoText.setText("Get Infos after 10 Trys!");
-            } else {
-                predInfoText.setText("You cant kill that Boss!");
-            }
-        }
+        changePredText(predInfoText, numDeaths);
 
         /*
          * Slider
@@ -98,11 +88,12 @@ public class BossCostumPredController implements Controller {
         numOfBadTrysSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
             int value = newValue.intValue();
             if (value == 0) {
-                badTrysText.setStyle("-fx-text-fill: red;");
+                badTrysText.setText("Prediction deactivated");
+                badTrysText.setFill(Color.RED);
             } else {
-                badTrysText.setStyle("-fx-text-fill: black;");
+                badTrysText.setText("Bad Trys: " + value);
+                badTrysText.setFill(Color.BLACK);
             }
-            badTrysText.setText("Bad Trys: " + value);
             settings.setNumBadTrys(value);
         });
 
@@ -133,16 +124,7 @@ public class BossCostumPredController implements Controller {
             } else {
                 myPredInfos = myPredictionService.getPredInfos(boss.getDeaths(), settings, pred[pred.length-1]);
             }
-            if (myPredInfos.length != 0) {
-                predInfoText.setText(String.format("Next PB: %d\nCurrent Mean: %d", 
-                                                   (int)myPredInfos[0], (int)myPredInfos[1]));
-            } else {
-                if (numDeaths < 11) {
-                    predInfoText.setText("Get Infos after 10 Trys!");
-                } else {
-                    predInfoText.setText("You cant kill that Boss!");
-                }
-            }
+            changePredText(predInfoText, numDeaths);
         };
         settings.listeners().addPropertyChangeListener(Settings.PROPERTY_CUMULATIVE_PROBABILITY_SCALING, predInfoListener);
         settings.listeners().addPropertyChangeListener(Settings.PROPERTY_NUM_BAD_TRYS, predInfoListener);
@@ -161,25 +143,32 @@ public class BossCostumPredController implements Controller {
             } else {
                 myPredInfos = myPredictionService.getPredInfos(boss.getDeaths(), settings, pred[pred.length-1]);
             }
-            if (myPredInfos.length != 0) {
-                if (calculateService.bossDead(boss)) {
-                    predInfoText.setText("You already killed that Boss!");
-                } else {
-                    predInfoText.setText(String.format("Next PB: %d\nCurrent Mean: %d", 
-                                                   (int)myPredInfos[0], (int)myPredInfos[1]));
-                }
-            } else {
-                if (numOfDeaths < 11) {
-                    predInfoText.setText("Get Infos after 10 Trys!");
-                } else {
-                    predInfoText.setText("You cant kill that Boss!");
-                }
-            }
+            changePredText(predInfoText, numDeaths);
         };
 
         boss.listeners().addPropertyChangeListener(Boss.PROPERTY_DEATHS, deathListener);
 
         return parent;
+    }
+
+    private void changePredText(Text predInfoText, int numDeaths) {
+        if (myPredInfos.length != 0) {
+            if (calculateService.bossDead(boss)) {
+                predInfoText.setText("You already killed that Boss!");
+            } else {
+                predInfoText.setText(String.format("Next PB: %d\nCurrent Mean: %d", 
+                                               (int)myPredInfos[0], (int)myPredInfos[1]));
+            }
+        } else {
+            if (boss.getName().equals("Other Monsters or Heights") 
+                || boss.getName().equals("Please create a new game")) {
+                predInfoText.setText("You cant kill that Boss!");
+            } else if (calculateService.bossDead(boss)) {
+                predInfoText.setText("This Boss is dead!");
+            } else if (numDeaths < 11) {
+                predInfoText.setText("Get Infos after 10 Trys!");
+            }
+        }
     }
 
     @Override

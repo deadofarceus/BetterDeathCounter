@@ -55,17 +55,13 @@ public class BossController implements Controller {
         bossName.setText(boss.getName());
         int numDeaths = boss.getDeaths().size();
         allBossDeaths.setText("Deaths: " + numDeaths);
-
-        if (regressionInfos.length != 0) {
-            if(calculateService.bossDead(boss)) {
-                calculatedTrys.setText("You already killed that Boss!");
-            } else {
-                calculatedTrys.setText(String.format("Consistent zero: %d\nExponential Last Try: %d", 
-                                                   (int)regressionInfos[2], (int)regressionInfos[5]));  
-            }
-        } else {
-            calculatedTrys.setText("You cant kill that Boss!");
+        adjustRegression.setStyle("-fx-text-fill: green;");
+        if(settings.getGarbageFactor() == -0.01) {
+            adjustRegression.setText("OFF");
+            adjustRegression.setStyle("-fx-text-fill: red;");
         }
+
+        changeCalculatesTrys(calculatedTrys, numDeaths);
 
         /*
          * Slider
@@ -96,13 +92,9 @@ public class BossController implements Controller {
          * Player Listener
          */
         garbageListener = e -> {
+            int numOfDeaths = boss.getDeaths().size();
             regressionInfos = calculateService.getRegressionInfos(player);
-            if (regressionInfos.length != 0) {
-                calculatedTrys.setText(String.format("Consistent zero: %d\nExponential Last Try: %d", 
-                                                    (int)regressionInfos[2], (int)regressionInfos[5]));
-            } else {
-                calculatedTrys.setText("You cant kill that Boss!");
-            }
+            changeCalculatesTrys(calculatedTrys, numOfDeaths);
         };
         settings.listeners().addPropertyChangeListener(Settings.PROPERTY_GARBAGE_FACTOR, garbageListener);
 
@@ -114,21 +106,30 @@ public class BossController implements Controller {
             int numOfDeaths = boss.getDeaths().size();
             allBossDeaths.setText("Deaths: " + numOfDeaths);
 
-            if (regressionInfos.length != 0) {
-                if (calculateService.bossDead(boss)) {
-                    calculatedTrys.setText("You already killed that Boss!");
-                } else {
-                    calculatedTrys.setText(String.format("Consistent zero: %d\nExponential Last Try: %d", 
-                                                        (int)regressionInfos[2], (int)regressionInfos[5]));
-                }
-            } else {
-                calculatedTrys.setText("You cant kill that Boss!");
-            }
+            changeCalculatesTrys(calculatedTrys, numOfDeaths);
         };
 
         boss.listeners().addPropertyChangeListener(Boss.PROPERTY_DEATHS, deathListener);
 
         return parent;
+    }
+
+    private void changeCalculatesTrys(Text calculatedTrys, int numDeaths) {
+        if (regressionInfos.length != 0) {
+            if (calculateService.bossDead(boss)) {
+                calculatedTrys.setText("This Boss is dead!");
+            } else {
+                calculatedTrys.setText(String.format("Consistent zero: %d\nExponential Last Try: %d", 
+                                            (int)regressionInfos[2], (int)regressionInfos[5]));
+            }
+        } else {
+            if (boss.getName().equals("Other Monsters or Heights") 
+                || boss.getName().equals("Please create a new game")) {
+                calculatedTrys.setText("You cant kill that Boss!");
+            } else if (numDeaths < 11) {
+                calculatedTrys.setText("Get Infos after 10 Trys!");
+            }
+        }
     }
 
     @Override
