@@ -47,13 +47,13 @@ public class AutomationService {
     private void changeState(BufferedImage screenShot) {
         switch (this.STATE) {
             case FIGHTING:
-                if (getLoading(screenShot) > 2000) {
+                if (getLoading(screenShot)) {
                     this.STATE = LOADING;
                     TimeService.print("Changed State to " + LOADING);
                 }
                 break;
             default:
-                if (getCurrentPercentage(screenShot) > 97) {
+                if (getCurrentPercentage(screenShot) > 5) {
                     currentPercentage = Integer.MAX_VALUE;
                     this.STATE = FIGHTING;
                     TimeService.print("Changed State to " + FIGHTING);
@@ -69,36 +69,35 @@ public class AutomationService {
                 percentage++;
             }
         }
-
+        if (percentage > 60) {
+            percentage += 15;
+        }
+        
         return (int) Math.round(percentage*20.0/199 + 0.5);
     }
 
-    private boolean isPixelRed(BufferedImage bufferedImage, int i, int j) {
-        int x = i;
-        int y = j;
+    private boolean isPixelRed(BufferedImage bufferedImage, int x, int y) {
         int color = bufferedImage.getRGB(x, y);
         int red = (color >> 16) & 0xFF;
         int green = (color >> 8) & 0xFF;
         int blue = color & 0xFF;
-        return red+20 > green + blue && red > 25 && green < 80 && blue < 60;
+        return 30 > green + blue && red > 60 && red < 100;
     }
 
-    private int getLoading(BufferedImage bufferedImage) {
+    private boolean getLoading(BufferedImage bufferedImage) {
         int loading = 0;
-        for (int j = 0; j < 5; j++) {
+        for (int j = 0; j < 50; j++) {
             for (int i = 0; i < 1920; i++) {
                 if (isPixelBlack(bufferedImage, i, j)) {
                     loading += 1;
                 }
             }
         }
-        
-        return loading;
+
+        return loading > 15000;
     }
 
-    private boolean isPixelBlack(BufferedImage bufferedImage, int i, int j) {
-        int x = i;
-        int y = j;
+    private boolean isPixelBlack(BufferedImage bufferedImage, int x, int y) {
         int color = bufferedImage.getRGB(x, y);
         int red = (color >> 16) & 0xFF;
         int green = (color >> 8) & 0xFF;

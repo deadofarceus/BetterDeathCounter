@@ -114,7 +114,7 @@ public class DeathController implements Controller {
                 } else if (result > 1000) {
                     Platform.runLater(() -> autoPercentage.setText("Detected Percentage:\n" + (result-1000) + "%"));
                 }
-            }, 1, 1, TimeUnit.SECONDS);
+            }, 300, 300, TimeUnit.MILLISECONDS);
         }
 
         secondPhase.setVisible(false);
@@ -205,7 +205,11 @@ public class DeathController implements Controller {
                         }
                     }).start();
                     
-                    TimeService.print("New Death: " + d.getPercentage());
+                    int deathTime = d.getTime();
+                    long minutes = (deathTime % 3600) / 60;
+                    long seconds = deathTime % 60;
+                    TimeService.print("New Death: " + d.getPercentage() + "% Time:" 
+                        + String.format("%02d:%02d", minutes, seconds));
                 }
             }
             
