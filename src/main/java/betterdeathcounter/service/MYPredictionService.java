@@ -3,10 +3,15 @@ package betterdeathcounter.service;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.commons.math3.distribution.NormalDistribution;
 import org.apache.commons.math3.stat.descriptive.moment.Mean;
 import org.apache.commons.math3.stat.descriptive.moment.StandardDeviation;
+
+import com.google.common.util.concurrent.AtomicDouble;
 
 import betterdeathcounter.model.Boss;
 import betterdeathcounter.model.Death;
@@ -20,7 +25,10 @@ public class MYPredictionService {
 
     private static final int NORMAL_DISTRIBUTION_SCALING = 999;
     private static final int MAX_VALUE = Integer.MAX_VALUE;
-    private static final int PB_RANGE_THRESHOLD = 6;
+    private static final int PB_RANGE_THRESHOLD = 5;
+    private static final int NUM_THREADS = 5;
+
+    private int nextPB = 0;
 
     public double[] getMYPredictions(Boss boss, Settings settings) {
         List<Death> deaths = boss.getDeaths();
@@ -44,31 +52,50 @@ public class MYPredictionService {
             }
         }
 
-        int startIndex = data.length-1; 
-        int nextPB = 0;
+        // System.out.println();
+        // System.out.println();
+        // System.out.println();
+        // System.out.println();
+
+        int realPb = pb;
+
+        int startIndex = data.length-1;
         double nextValue = 11;
         int iterations = 0;// Limit iterations
+        boolean foundPB = true;
+
         while (possiblePB > 1 && nextValue-5 > 1 && iterations < 10) {
             nextValue = getNextValue(data, pb);
             if (nextValue < pb) {
                 pb = (int)nextValue;
             }
 
+            
             // add bad trys
             double[] badTrys = getBadTrys(data, settings.getNumBadTrys(), settings.getCumulativeProbabilityScaling());
             data = appendArray(data, badTrys);
-
+            
             // add nextValue
             data = Arrays.copyOf(data, data.length + 1);
             data[data.length - 1] = nextValue;
+            
+
+            if (foundNextPb(data, realPb, foundPB)) {
+                foundPB = false;
+            }
+            if (foundPB && nextValue < realPb) {
+                nextPB = (int)nextValue;
+                foundPB = false;
+            }
 
             weights = getWeights(data, NORMAL_DISTRIBUTION_SCALING);
             mean = calculateMean.evaluate(data);
             weightedAvg = calculateMean.evaluate(data, weights);
             possiblePB = weightedAvg - (mean - weightedAvg);
-            if (iterations == 0) {
-                nextPB = (int) possiblePB;
-            }
+            // System.out.println("Mean: " + mean);
+            // System.out.println("Weighted Average: " + weightedAvg);
+            // System.out.println("Possible PB: " + possiblePB);
+
             iterations++;
         }
 
@@ -81,6 +108,20 @@ public class MYPredictionService {
         data[data.length - 1] = nextPB;
 
         return Arrays.copyOfRange(data, startIndex, data.length);
+    }
+
+    private boolean foundNextPb(double[] data, int realPb, boolean foundPB) {
+        if (!foundPB) {
+            return false;
+        }
+
+        for (int i = 0; i < data.length; i++) {
+            if(data[i] < realPb) {
+                nextPB = (int) data[i];
+                return true;
+            }
+        }
+        return false;
     }
 
     private double[] getData(List<Death> deaths) {
@@ -125,16 +166,38 @@ public class MYPredictionService {
     }
 
     private double getNextValue(double[] data, int pb) {
-        double sample;
-        double mean = calculateMean.evaluate(data);
-        double standardDeviation = calculateStandardDeviation.evaluate(data);
-        NormalDistribution normal = new NormalDistribution(mean, standardDeviation + 999);
+        final double mean = calculateMean.evaluate(data);
+        final double standardDeviation = calculateStandardDeviation.evaluate(data);
+        final NormalDistribution normal = new NormalDistribution(mean, standardDeviation);
 
-        do {
-            sample = normal.sample();
-        } while (sample >= 101 || sample < 0 || !isInPBRange(sample, pb));
+        AtomicDouble nextValue = new AtomicDouble(-1.0);
+        AtomicBoolean running = new AtomicBoolean(true);
 
-        return sample;
+        ExecutorService executor = Executors.newFixedThreadPool(NUM_THREADS);
+        Runnable sampleSearch = new Runnable() {
+            @Override
+            public void run() {
+                double sample;
+                do {
+                    sample = normal.sample();
+                } while ((sample >= 101 || sample < 0 || !isInPBRange(sample, pb)) && running.get());
+                if (nextValue.get() == -1.0) {
+                    nextValue.set(sample);
+                    running.set(false);
+                }
+            }
+        };
+
+        for (int i = 0; i < NUM_THREADS; i++) {
+            executor.submit(sampleSearch);
+        }
+
+        while (nextValue.get() == -1.0) {}
+        
+        // Shut down the executor
+        executor.shutdown();
+
+        return nextValue.get();
     }
 
     private double[] getWeights(double[] data, double weightScaling) {

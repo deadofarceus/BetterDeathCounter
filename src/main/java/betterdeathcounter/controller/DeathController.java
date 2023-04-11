@@ -23,6 +23,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.layout.HBox;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
@@ -68,6 +69,7 @@ public class DeathController implements Controller {
         if (settings.getAutomatic()) {
             autoPercentage.setFont(new Font(20));
             autoPercentage.setText("Detected Percentage:\n100%");
+            autoPercentage.setFill(Color.web("#FFA500"));
             autoPercentage.setTextAlignment(TextAlignment.CENTER);
             timerBox.getChildren().add(autoPercentage);
         }
@@ -159,62 +161,67 @@ public class DeathController implements Controller {
             // }
 
             
+        
+
+        if(boss.getName().equals("Other Monsters or Heights")) {
+            boss.withDeaths(new Death());
+            return;
+        }
+        if(!calculateService.bossDead(boss)) {
             int percentage = percentageSlider.valueProperty().intValue();
             if (result > 0) {
                 percentage = result;
             }
             Death d = new Death().setPercentage(percentage);
 
-            if(elapsedTime > 30) d.setTime((int)elapsedTime);
-            else {
-                Death nearest = null;
-                for (Death death : player.getCurrentBoss().getDeaths()) {
-                    double diff = Math.abs(death.getPercentage() - percentage);
-                    if(diff < 5 && (nearest == null || diff < Math.abs(nearest.getPercentage()-percentage))) {
-                        nearest = death;
+            if (settings.getShowTimer()) {
+                if (settings.getAutomatic() || elapsedTime > 30) {
+                    d.setTime((int)elapsedTime);
+                } else {
+                    Death nearest = findNearestDeath(player.getCurrentBoss().getDeaths(), percentage);
+
+                    if (nearest != null) {
+                        d.setTime(nearest.getTime());
                     }
                 }
-
-                if (nearest != null) {
-                    d.setTime(nearest.getTime());
-                }
-            }
-
-            if(settings.getShowTimer()) {
                 startTime = System.currentTimeMillis();
             }
+            boss.withDeaths(d);
 
-            if(boss.getName().equals("Other Monsters or Heights")) {
-                boss.withDeaths(new Death());
-            } else {
-                if(!calculateService.bossDead(boss)) {
-                    boss.withDeaths(d);
-
-                    new Thread(() -> {
-                        try {
-                            if (player.getCurrentGame().getSpreadsheetId() != null && settings.getAPIUsername() != null) {
-                                apiService.sendData(player.getCurrentGame(), boss);
-                            } else {
-                                TimeService.print("No connection to google service!");
-                                TimeService.print("Please enter API Username for the player and ");
-                                TimeService.print("the spreadsheetId for the game under the Connect menu!");
-                                System.out.println();
-                            }
-                        } catch (GeneralSecurityException | IOException e1) {
-                            e1.printStackTrace();
-                        }
-                    }).start();
-                    
-                    int deathTime = d.getTime();
-                    long minutes = (deathTime % 3600) / 60;
-                    long seconds = deathTime % 60;
-                    TimeService.print("New Death: " + d.getPercentage() + "% Time:" 
-                        + String.format("%02d:%02d", minutes, seconds));
+            new Thread(() -> {
+                try {
+                    if (player.getCurrentGame().getSpreadsheetId() != null && settings.getAPIUsername() != null) {
+                        apiService.sendData(player.getCurrentGame(), boss);
+                    } else {
+                        TimeService.print("No connection to google service!");
+                        TimeService.print("Please enter API Username for the player and ");
+                        TimeService.print("the spreadsheetId for the game under the Connect menu!");
+                        System.out.println();
+                    }
+                } catch (GeneralSecurityException | IOException e1) {
+                    e1.printStackTrace();
                 }
-            }
-            
-            totalTime.setText(totalTime(player.getCurrentBoss().getDeaths()));
+            }).start();
+                        
+            int deathTime = d.getTime();
+            long minutes = (deathTime % 3600) / 60;
+            long seconds = deathTime % 60;
+            TimeService.print("New Death: " + d.getPercentage() + "% Time:" 
+                + String.format("%02d:%02d", minutes, seconds));
+        }
+        totalTime.setText(totalTime(player.getCurrentBoss().getDeaths()));
+    }
 
+    private Death findNearestDeath(List<Death> deaths, double percentage) {
+        Death nearest = null;
+        for (int i = deaths.size() - 1; i >= 0; i--) {
+            Death death = deaths.get(i);
+            double diff = Math.abs(death.getPercentage() - percentage);
+            if (diff < 5 && (nearest == null || diff < Math.abs(nearest.getPercentage() - percentage))) {
+                nearest = death;
+            }
+        }
+        return nearest;
     }
 
     private String totalTime(List<Death> deaths) {

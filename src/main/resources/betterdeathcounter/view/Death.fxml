@@ -21,14 +21,14 @@
       </VBox>
       <HBox id="timerBox" alignment="CENTER" prefHeight="54.0" prefWidth="437.0" spacing="30.0">
          <children>
-            <Text id="timerText" strokeType="OUTSIDE" strokeWidth="0.0" text="">
+            <Text id="timerText" fill="ORANGE" strokeType="OUTSIDE" strokeWidth="0.0" text="00:00">
                <font>
                   <Font size="50.0" />
                </font>
             </Text>
          </children>
       </HBox>
-      <Text id="totalTime" strokeType="OUTSIDE" strokeWidth="0.0" text="Total Time: &#10;00:00:00" textAlignment="CENTER">
+      <Text id="totalTime" fill="ORANGE" strokeType="OUTSIDE" strokeWidth="0.0" text="Total Time: &#10;00:00:00" textAlignment="CENTER">
          <font>
             <Font size="20.0" />
          </font>

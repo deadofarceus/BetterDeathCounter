@@ -53,7 +53,7 @@ public class AutomationService {
                 }
                 break;
             default:
-                if (getCurrentPercentage(screenShot) > 5) {
+                if (getCurrentPercentage(screenShot) > 90) {
                     currentPercentage = Integer.MAX_VALUE;
                     this.STATE = FIGHTING;
                     TimeService.print("Changed State to " + FIGHTING);
