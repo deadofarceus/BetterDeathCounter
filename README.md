@@ -15,6 +15,9 @@ Move the slider under the Death button to select the boss left HP in %. If the b
 
 A progress graph shows your progress (simple explanation). The graph also shows functions trying to predict your last try. With a slider, you can adjust the value used for the exponential regression.
 
+## Warning
+
+The auto detection works only for Elden Ring in fullscreen, 1920x1080 screens and only for the first  Phase of the Boss.
 ## Dependencies
 
 To run BetterDeathcounter, you will need to have the following dependencies installed:
